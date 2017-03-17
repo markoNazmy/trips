@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1009010492298",
+    "project_id": "trips-161810"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009010492298:android:d15710760197f471",
+        "android_client_info": {
+          "package_name": "com.jets.mytrips"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009010492298-3b3a92nrjnh5uoolng4njp9chnj5su38.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jets.mytrips",
+            "certificate_hash": "ea2d58bf542c5e8a4d76f1c875f28fc0608fa201"
+          }
+        },
+        {
+          "client_id": "1009010492298-2or0h85vand7r71p484bq28d99539daf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfQ6k5GCGANzdKSE5qP-Bl6PTidf4BJao"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
