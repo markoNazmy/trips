@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             editor.commit();
 
             // Send user data to the backend server
-            String url = "http://192.168.1.2:8081/MyTripsBackend/RegisterServlet";
+            String url = "http://10.118.48.203:8080/MyTripsBackend/RegisterServlet";
 
             StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override

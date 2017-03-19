@@ -5,13 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.jets.mytrips.beans.Note;
 import com.jets.mytrips.beans.Trip;
 
 import java.util.ArrayList;
-
-
+import java.util.UUID;
 
 /**
  * Created by rocke on 3/14/2017.
@@ -27,7 +27,7 @@ public class DBAdapter {
         private static final String LOG = "DatabaseHelper";
 
         // Database Version
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
 
         // Database Name
         private static final String DATABASE_NAME = "trips.db";
@@ -55,14 +55,15 @@ public class DBAdapter {
 
         // Trips table create statement
         private static final String CREATE_TABLE_TRIPS = "CREATE TABLE " + TABLE_TRIPS
-                + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + USER_ID + " INTEGER,"
+                + "(" + ID + " TEXT," + USER_ID + " INTEGER,"
                 + TRIP_START_DEST + " TEXT, " + TRIP_START_COORD   + " TEXT," + TRIP_END_DEST + " TEXT,"
                 + TRIP_END_COORD + " TEXT," + TRIP_DATE + " TEXT," + TRIP_TIME + " TEXT," + TRIP_NOTES +
                 " TEXT," + TRIP_STATUS + " TEXT," + TRIP_IS_DONE + " INTEGER" + ")";
 
         // Notes table create statement
         private static final String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NOTES
-                + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +  TRIP_ID + " INTEGER, " + NOTE + " TEXT)";
+                + "(" + ID + " TEXT," +  TRIP_ID + " TEXT, " + NOTE + " TEXT, " +
+                " FOREIGN KEY (" + TRIP_ID + ") REFERENCES "+ TABLE_TRIPS + "(" + ID + "))";
 
         public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -125,7 +126,7 @@ public class DBAdapter {
         c.moveToFirst();
         while (c.moveToNext()) {
             Trip trip = new Trip();
-            trip.setId(c.getInt((c.getColumnIndex(DatabaseHelper.ID))));
+            trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
             trip.setStart(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_DEST)));
             trip.setStartCoord(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_COORD)));
@@ -198,8 +199,8 @@ public class DBAdapter {
         c.moveToFirst();
         while (c.moveToNext()) {
             Note note = new Note();
-            note.setId(c.getInt((c.getColumnIndex(DatabaseHelper.ID))));
-            note.setTripId((c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
+            note.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
+            note.setTripId((c.getString(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
             note.setNote(c.getString(c.getColumnIndex(DatabaseHelper.NOTE)));
 
             notes.add(note);
@@ -233,5 +234,20 @@ public class DBAdapter {
         SQLiteDatabase db = helper.getReadableDatabase();
         if (db != null && db.isOpen())
             db.close();
+    }
+
+    /****************LOGOUT**********************/
+
+    public void logout(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("delete from "+ helper.TABLE_TRIPS);
+        db.execSQL("delete from "+ helper.TABLE_NOTES);
+    }
+
+    /****************GFENERATE ID**********************/
+
+    //call it when creating a new object
+    public String generateId(){
+        return UUID.randomUUID().toString().substring(10);
     }
 }
