@@ -1,18 +1,14 @@
 package com.jets.mytrips.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,27 +18,22 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.User;
-import com.jets.mytrips.services.JSONParser;
-import com.jets.mytrips.services.VolleySingleton;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.jets.mytrips.controllers.UserController;
+import com.jets.mytrips.services.Validator;
+import com.jets.mytrips.services.VolleyCallback;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private final int RC_SIGN_IN = 6;
-    JSONParser jsonParser;
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        jsonParser = JSONParser.getInstance();
+        userController = UserController.getInstance(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -53,9 +44,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        // Set the dimensions of the sign-in button.
+        // Customize google sign-in button
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setColorScheme(SignInButton.COLOR_DARK);
+
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,11 +56,51 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
+
+        Button signInBttn = (Button) findViewById(R.id.sign_in);
+        signInBttn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
+                String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
+                /*Validator validator = Validator.getInstance();
+
+                if (!validator.isValidInput(email) && !validator.isValidInput(password)) {
+                    Toast.makeText(LoginActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!validator.isValidEmail(email)) {
+                    Toast.makeText(LoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
+
+                userController.login(email, password, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        // Switch to CurrentTripsActivity activity
+                        switchToCurrentTripsActivity(user.getFullName());
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        Button registerButton = (Button) findViewById(R.id.register_button);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT);
+        Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -84,52 +117,44 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully
-
             GoogleSignInAccount userAccount = result.getSignInAccount();
             final User user = new User(userAccount.getId(), userAccount.getId(), userAccount.getGivenName() + " " + userAccount.getFamilyName());
 
-            // Save user data in preferences file
-            SharedPreferences.Editor editor = getSharedPreferences("MyTrips", MODE_PRIVATE).edit();
-            editor.putString("email", user.getEmail());
-            editor.putString("fullName", user.getFullName());
-            editor.putBoolean("gmail_account", true);
-            editor.commit();
-
             // Send user data to the backend server
-            String url = "http://192.168.1.2:8081/MyTripsBackend/RegisterServlet";
+            userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    // Switch to CurrentTripsActivity activity
+                    switchToCurrentTripsActivity(user.getFullName());
+                }
 
-            StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("success")) {
-                            Intent intent = new Intent(LoginActivity.this, CurrentTripsActivity.class);
-                            intent.putExtra("username", user.getFullName());
-                            startActivity(intent);
-                            LoginActivity.this.finish();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Something wrong happened", Toast.LENGTH_SHORT);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Something wrong happened", Toast.LENGTH_SHORT);
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("json", jsonParser.prepareUserJsonString(user));
-                    return params;
-                }
-            };
+                public void onFailure(String errorMessage) {
+                    UserController.getInstance(LoginActivity.this).registerUser(user,
+                            new VolleyCallback() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    // Save user data in preferences file
+                                    userController.saveUserSession(user);
 
-            VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+                                    // Switch to CurrentTripsActivity activity
+                                    switchToCurrentTripsActivity(user.getFullName());
+                                }
+
+                                @Override
+                                public void onFailure(String errorMessage) {
+                                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            });
         }
+    }
+
+    private void switchToCurrentTripsActivity(String userFullName) {
+        Intent intent = new Intent(LoginActivity.this, CurrentTripsActivity.class);
+        intent.putExtra("username", userFullName);
+        LoginActivity.this.startActivity(intent);
+        LoginActivity.this.finish();
     }
 }
