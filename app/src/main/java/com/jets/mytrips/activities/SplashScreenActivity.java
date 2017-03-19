@@ -22,14 +22,11 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
                 if (sharedPreferences.contains("email")) {
-                    if (sharedPreferences.getBoolean("gmail_account", false)) {
-                        Intent intent = new Intent(SplashScreenActivity.this, CurrentTripsActivity.class);
-                        intent.putExtra("username", sharedPreferences.getString("fullName", ""));
-                        startActivity(intent);
-                    }
-                } else {
-                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(SplashScreenActivity.this, CurrentTripsActivity.class);
+                    intent.putExtra("username", sharedPreferences.getString("fullName", ""));
                     startActivity(intent);
+                } else {
+                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                 }
                 SplashScreenActivity.this.finish();
             }

@@ -40,6 +40,29 @@ public class JSONParser {
         }
         return jsonObject.toString();
     }
+
+    public String prepareJsonStringForSignIn(String email, String password) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", email);
+            jsonObject.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    public User getUserFromJsonSting(String jsonString) {
+        User user = null;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            user = new User(jsonObject.getInt("id"), jsonObject.getString("email"), jsonObject.getString("password"),
+                    jsonObject.getString("fullName"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
     public ArrayList<Trip> convertJsonArrayToTrips(JSONObject jsonObject) {
 
 

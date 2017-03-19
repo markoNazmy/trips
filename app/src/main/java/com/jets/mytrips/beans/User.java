@@ -6,9 +6,17 @@ package com.jets.mytrips.beans;
 
 public class User {
 
+    int id;
     String email;
     String password;
     String fullName;
+
+    public User(int id, String email, String password, String fullName) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+    }
 
     public User(String email, String password, String fullName) {
         this.email = email;
@@ -18,6 +26,14 @@ public class User {
 
     public User() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
