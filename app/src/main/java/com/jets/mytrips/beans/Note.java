@@ -5,11 +5,11 @@ package com.jets.mytrips.beans;
  */
 
 public class Note {
-    int id;
-    int tripId;
+    String id;
+    String tripId;
     String note;
 
-    public Note(int id, int tripId, String note) {
+    public Note(String id, String tripId, String note) {
         this.id = id;
         this.tripId = tripId;
         this.note = note;
@@ -19,19 +19,19 @@ public class Note {
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getTripId() {
+    public String getTripId() {
         return tripId;
     }
 
-    public void setTripId(int tripId) {
+    public void setTripId(String tripId) {
         this.tripId = tripId;
     }
 

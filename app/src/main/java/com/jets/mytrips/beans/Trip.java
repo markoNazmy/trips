@@ -1,14 +1,15 @@
 package com.jets.mytrips.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rocke on 3/14/2017.
  */
 
-public class Trip {
+public class Trip  implements Serializable{
 
-    int id;
+    String id;
     int userId;
     String start;
     String startCoord;
@@ -20,7 +21,7 @@ public class Trip {
     int done;       //represented as int in db
     ArrayList<Note> notes;
 
-    public Trip(int id, int userId, String start, String startCoord, String end, String endCoord,
+    public Trip(String id, int userId, String start, String startCoord, String end, String endCoord,
                 String date, String time, String status, int done, ArrayList<Note> notes) {
         this.id = id;
         this.userId = userId;
@@ -39,11 +40,11 @@ public class Trip {
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
