@@ -18,32 +18,32 @@ import java.util.ArrayList;
 public class MyTripsListAdapter extends ArrayAdapter {
     ArrayList<Trip> values;
     Context context;
+
     public MyTripsListAdapter(Context context, ArrayList<Trip> resource) {
-        super(context, R.layout.current_trips_list_cell,R.id.from,resource);
-        this.values =resource;
-        this.context=context;
+        super(context, R.layout.current_trips_list_cell, R.id.trip_name, resource);
+        this.values = resource;
+        this.context = context;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-       View rowView= convertView;
-       ViewHolder viewHolder ;
-        if (rowView==null){
+        View rowView = convertView;
+        ViewHolder viewHolder;
+        if (rowView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = layoutInflater.inflate(R.layout.current_trips_list_cell,parent,false);
+            rowView = layoutInflater.inflate(R.layout.current_trips_list_cell, parent, false);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
             System.out.println("hi");
-        }
-        else{
-            viewHolder =(ViewHolder) rowView.getTag();
+        } else {
+            viewHolder = (ViewHolder) rowView.getTag();
             System.out.println("bye");
         }
-        viewHolder.getFrom().setText(values.get(position).getStart());
-        viewHolder.getTo().setText(values.get(position).getEnd());
-        viewHolder.getDate().setText(values.get(position).getDate());
 
+        viewHolder.getTripName().setText(values.get(position).getName());
+        //viewHolder.getPlaceImageView().setImageResource();
+        viewHolder.getDate().setText(values.get(position).getDate());
 
         return rowView;
     }

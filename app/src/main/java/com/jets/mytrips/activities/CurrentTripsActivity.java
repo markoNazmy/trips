@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -26,6 +27,8 @@ import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.MyTripsListAdapter;
 import com.jets.mytrips.services.TripListData;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -51,7 +54,7 @@ public class CurrentTripsActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Intent intent = new Intent(getBaseContext(),AddOrEditTrip.class);
+                Intent intent = new Intent(getBaseContext(), AddOrEditTrip.class);
                 startActivity(intent);
             }
         });
@@ -96,12 +99,14 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
 
-        trips= dbAdapter.getUserTrips(2);
+        trips = dbAdapter.getUserTrips(2);
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
+
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
-        myTripsListAdapter = new MyTripsListAdapter(getBaseContext(),trips);
+        myTripsListAdapter = new MyTripsListAdapter(getBaseContext(), trips);
         creator = new SwipeMenuCreator() {
 
             @Override
@@ -149,24 +154,23 @@ public class CurrentTripsActivity extends AppCompatActivity
         trips_list.setMenuCreator(creator);
 
 
-
         trips_list.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
                         // open
-                        String out= String.valueOf(trips_list.getItemAtPosition(listpostion));
+                        String out = String.valueOf(trips_list.getItemAtPosition(listpostion));
 
 
-                        Toast.makeText(getApplicationContext(),out,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), out, Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         // delete
                         // data.removeView(data.getAdapter().getView(listpostion,null,data));
                         trips.remove(listpostion);
                         myTripsListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(),"delete done",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "delete done", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -178,7 +182,7 @@ public class CurrentTripsActivity extends AppCompatActivity
             @Override
             public void onSwipeStart(int position) {
                 // swipe start
-                listpostion=position;
+                listpostion = position;
 
             }
 
@@ -196,14 +200,7 @@ public class CurrentTripsActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
-
-
-
-
-
     }
-
 
 
     @Override
@@ -244,17 +241,13 @@ public class CurrentTripsActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_history) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_add_trip) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_synchronize) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
 
         }
 

@@ -1,6 +1,7 @@
 package com.jets.mytrips.services;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jets.mytrips.R;
@@ -13,37 +14,34 @@ public class ViewHolder {
     View view;
 
 
-
-
-
-    public TextView getFrom() {
-        if(from==null){
-            from = (TextView) view.findViewById(R.id.from);
+    public TextView getTripName() {
+        if (trip_name == null) {
+            trip_name = (TextView) view.findViewById(R.id.trip_name);
         }
-        return from;
+        return trip_name;
     }
 
-    public TextView getTo() {
-        if(to==null){
-            to = (TextView) view.findViewById(R.id.to);
+    public ImageView getPlaceImageView() {
+        if (placeImageView == null) {
+            placeImageView = (ImageView) view.findViewById(R.id.placeImageView);
         }
-        return to;
+        return placeImageView;
     }
 
     public TextView getDate() {
-        if(date==null){
+        if (date == null) {
             date = (TextView) view.findViewById(R.id.date);
         }
         return date;
     }
 
-    TextView from;
-    TextView to;
+    TextView trip_name;
+    ImageView placeImageView;
     TextView date;
 
 
     public ViewHolder(View view) {
-        this.view=view;
+        this.view = view;
     }
 
 }
