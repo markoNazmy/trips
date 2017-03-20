@@ -25,6 +25,7 @@ import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.MyTripsListAdapter;
+import com.jets.mytrips.services.TripListData;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class CurrentTripsActivity extends AppCompatActivity
     SwipeMenuCreator creator;
     MyTripsListAdapter myTripsListAdapter;
     int listpostion;
-    ArrayList<Trip> trips;
+    ArrayList<Trip> trips = TripListData.getTripsListInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,7 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
 
-        trips= dbAdapter.getUserTrips(1);
+        trips= dbAdapter.getUserTrips(2);
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());

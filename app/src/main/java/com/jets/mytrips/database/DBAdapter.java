@@ -39,15 +39,20 @@ public class DBAdapter {
         // TRIPS Table - column names
         private static final String ID = "id";
         private static final String USER_ID = "userId";
-        private static final String TRIP_START_DEST = "startDest";
-        private static final String TRIP_START_COORD = "startCoord";
-        private static final String TRIP_END_DEST = "endDest";
-        private static final String TRIP_END_COORD = "endCoord";
+        private static final String TRIP_NAME = "name";
+        private static final String TRIP_START_DEST = "start";
+        private static final String TRIP_START_X = "startX";
+        private static final String TRIP_START_Y = "startY";
+        private static final String TRIP_END_DEST = "end";
+        private static final String TRIP_END_X = "endX";
+        private static final String TRIP_END_Y = "endY";
         private static final String TRIP_DATE = "date";
         private static final String TRIP_TIME = "time";
         private static final String TRIP_NOTES = "notes";
         private static final String TRIP_STATUS = "status";
         private static final String TRIP_IS_DONE = "done";
+        private static final String TRIP_IMAGE = "image";
+        private static final String TRIP_ALARM_ID = "alarmId";
 
         // NOTES Table - column names
         private static final String TRIP_ID = "tripId";
@@ -55,10 +60,10 @@ public class DBAdapter {
 
         // Trips table create statement
         private static final String CREATE_TABLE_TRIPS = "CREATE TABLE " + TABLE_TRIPS
-                + "(" + ID + " TEXT," + USER_ID + " INTEGER,"
-                + TRIP_START_DEST + " TEXT, " + TRIP_START_COORD   + " TEXT," + TRIP_END_DEST + " TEXT,"
-                + TRIP_END_COORD + " TEXT," + TRIP_DATE + " TEXT," + TRIP_TIME + " TEXT," + TRIP_NOTES +
-                " TEXT," + TRIP_STATUS + " TEXT," + TRIP_IS_DONE + " INTEGER" + ")";
+                + "(" + ID + " TEXT, " + USER_ID + " INTEGER, " + TRIP_NAME + " TEXT, "
+                + TRIP_START_DEST + " TEXT, " + TRIP_START_X   + " DOUBLE, " + TRIP_START_Y  + " DOUBLE, " + TRIP_END_DEST + " TEXT, "
+                + TRIP_END_X + " DOUBLE, " + TRIP_END_Y + " DOUBLE, " + TRIP_DATE + " TEXT, " + TRIP_TIME + " INTEGER, " + TRIP_NOTES +
+                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER" + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER)";
 
         // Notes table create statement
         private static final String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NOTES
@@ -99,14 +104,19 @@ public class DBAdapter {
         ContentValues values = new ContentValues();
         //id is auto incremented
         values.put(DatabaseHelper.USER_ID, trip.getUserId());
+        values.put(DatabaseHelper.TRIP_NAME, trip.getName());
         values.put(DatabaseHelper.TRIP_START_DEST, trip.getStart());
-        values.put(DatabaseHelper.TRIP_START_COORD, trip.getStartCoord());
+        values.put(DatabaseHelper.TRIP_START_X, trip.getStartX());
+        values.put(DatabaseHelper.TRIP_START_Y, trip.getStartY());
         values.put(DatabaseHelper.TRIP_END_DEST, trip.getEnd());
-        values.put(DatabaseHelper.TRIP_END_COORD, trip.getEndCoord());
+        values.put(DatabaseHelper.TRIP_END_X, trip.getEndX());
+        values.put(DatabaseHelper.TRIP_END_Y, trip.getEndY());
         values.put(DatabaseHelper.TRIP_DATE, trip.getDate());
         values.put(DatabaseHelper.TRIP_TIME, trip.getTime());
         values.put(DatabaseHelper.TRIP_STATUS, trip.getStatus());
-        values.put(DatabaseHelper.TRIP_IS_DONE, trip.isDone());
+        values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
+        values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
+        values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
 
         // insert row
         long trip_id = db.insert(DatabaseHelper.TABLE_TRIPS, null, values);
@@ -128,14 +138,19 @@ public class DBAdapter {
             Trip trip = new Trip();
             trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
+            trip.setName(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_NAME)));
             trip.setStart(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_DEST)));
-            trip.setStartCoord(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_COORD)));
+            trip.setStartX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_X)));
+            trip.setStartY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_Y)));
             trip.setEnd(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_END_DEST)));
-            trip.setEndCoord(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_END_COORD)));
+            trip.setEndX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_X)));
+            trip.setEndY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_Y)));
             trip.setDate(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_DATE)));
-            trip.setTime(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
+            trip.setTime(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
             trip.setStatus(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_STATUS)));
             trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
+            trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
+            trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
 
             trips.add(trip);
         }
@@ -150,14 +165,19 @@ public class DBAdapter {
         ContentValues values = new ContentValues();
         //id is auto incremented
         values.put(DatabaseHelper.USER_ID, trip.getUserId());
+        values.put(DatabaseHelper.TRIP_NAME, trip.getName());
         values.put(DatabaseHelper.TRIP_START_DEST, trip.getStart());
-        values.put(DatabaseHelper.TRIP_START_COORD, trip.getStartCoord());
+        values.put(DatabaseHelper.TRIP_START_X, trip.getStartX());
+        values.put(DatabaseHelper.TRIP_START_Y, trip.getStartY());
         values.put(DatabaseHelper.TRIP_END_DEST, trip.getEnd());
-        values.put(DatabaseHelper.TRIP_END_COORD, trip.getEndCoord());
+        values.put(DatabaseHelper.TRIP_END_X, trip.getEndX());
+        values.put(DatabaseHelper.TRIP_END_Y, trip.getEndY());
         values.put(DatabaseHelper.TRIP_DATE, trip.getDate());
         values.put(DatabaseHelper.TRIP_TIME, trip.getTime());
         values.put(DatabaseHelper.TRIP_STATUS, trip.getStatus());
-        values.put(DatabaseHelper.TRIP_IS_DONE, trip.isDone());
+        values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
+        values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
+        values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
 
         // updating row
         return db.update(DatabaseHelper.TABLE_TRIPS, values, DatabaseHelper.ID + " = ?",

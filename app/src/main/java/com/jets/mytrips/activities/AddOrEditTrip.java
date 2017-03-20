@@ -3,6 +3,10 @@ package com.jets.mytrips.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -25,6 +29,9 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Note;
 import com.jets.mytrips.beans.Trip;
+import com.jets.mytrips.database.DBAdapter;
+import com.jets.mytrips.services.AlarmManager;
+import com.jets.mytrips.services.TripListData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,10 +49,10 @@ public class AddOrEditTrip extends AppCompatActivity {
     Button pickTime;
     Button addNote;
     Button save;
-    ListView notesList;
+//    ListView notesList;
     LinearLayout linearLayout;
-    ArrayAdapter<String> tripListAdapter;
-    ArrayList<String>notesText = new ArrayList<String>();
+//    ArrayAdapter<String> tripListAdapter;
+//    ArrayList<String>notesText = new ArrayList<String>();
     ArrayList<Note>notes;
     int year;
     int month;
@@ -85,6 +92,9 @@ public class AddOrEditTrip extends AppCompatActivity {
                 // TODO: Get info about the selected place.
                 Log.i("dsfdsf", "Place: " + place.getName());
                 trip.setStart(place.getName().toString());
+                trip.setStart(place.getName().toString());
+                trip.setStartX(place.getLatLng().latitude);
+                trip.setStartY(place.getLatLng().longitude);
 
             }
 
@@ -101,7 +111,9 @@ public class AddOrEditTrip extends AppCompatActivity {
                 // TODO: Get info about the selected place.
                 Log.i("dsfdsf", "Place: " + place.getName());
                 trip.setEnd(place.getName().toString());
-
+                trip.setEnd(place.getName().toString());
+                trip.setEndX(place.getLatLng().latitude);
+                trip.setEndY(place.getLatLng().longitude);
             }
 
             @Override
@@ -158,29 +170,112 @@ public class AddOrEditTrip extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Note note = new Note();
-                note.setId(UUID.randomUUID().toString().substring(10));
-                note.setNote(tripNote.getText().toString());
-                note.setTripId(tripId);
-                System.out.println(note.getNote());
-                tripNote.setText("");
+                if(tripNote.getText().toString()!=null&&tripNote.getText().toString().trim()!="") {
+                    Note note = new Note();
+                    note.setId(UUID.randomUUID().toString().substring(10));
+                    note.setNote(tripNote.getText().toString());
+                    note.setTripId(tripId);
+                    System.out.println(note.getNote());
+                    tripNote.setText("");
 //                tripListAdapter.add(note.getNote());
 //                tripListAdapter.notifyDataSetChanged();
-                TextView textView = new TextView(AddOrEditTrip.this);
-                textView.setText(note.getNote());
-                linearLayout.addView(textView);
-                notes.add(note);
+                    TextView textView = new TextView(AddOrEditTrip.this);
+                    textView.setText(note.getNote());
+                    linearLayout.addView(textView);
+                    notes.add(note);
 //                ArrayList<String>notesText = new ArrayList<String>();
 //                for (int i =0;i<notes.size();i++){
 //                    notesText.add(notes.get(i).getNote());
 //                }
-
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you did'nt entered a note to add !", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
         save.setOnClickListener(new View.OnClickListener() {
+            boolean flag_save =false;
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
+                if(tripName.getText().toString()!=null&&tripName.getText().toString().trim()!=""){
+                    trip.setName(tripName.getText().toString());
+                    flag_save=true;
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a name for your trip", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    flag_save=false;
+                }
 
+
+                if(trip.getStart()!=null&&trip.getStart()!=""){
+                    flag_save=true;
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter Start destination for your trip", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    flag_save=false;
+                }
+
+
+
+
+                if(trip.getEnd()!=null&&trip.getEnd()!=""){
+                    flag_save=true;
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter End destination for your trip", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    flag_save=false;
+                }
+
+
+
+
+                if(year!=0&&(month+1)!=0&&day!=0){
+                    flag_save=true;
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a date for your trip", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    flag_save=false;
+                }
+
+
+
+                if(hours!=0){
+                    flag_save=true;
+                }
+                else{
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a time for your trip", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    flag_save=false;
+                }
+
+
+
+
+                if(flag_save){
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+                    String user_id =sharedPreferences.getString("fullName", "");
+                    if (user_id!=null) {
+                        trip.setUserId(Integer.parseInt(user_id));
+                    }
+                    android.icu.util.Calendar calendar = android.icu.util.Calendar.getInstance();
+                    calendar.set(year, month, day,
+                            hours, minutes, 0);
+                    int startTime = (int)calendar.getTimeInMillis();
+                    trip.setTime(startTime);
+                    trip.setAlarmId((int) System.currentTimeMillis());
+                    AlarmManager.setTask(trip,AddOrEditTrip.this);
+                    new DBAdapter(AddOrEditTrip.this).addTrip(trip);
+                    TripListData.getTripsListInstance().add(trip);
+                    TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this,TripListData.getTripsListInstance()).notifyDataSetChanged();
+                    Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
