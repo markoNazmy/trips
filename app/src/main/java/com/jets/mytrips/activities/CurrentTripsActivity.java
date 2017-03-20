@@ -1,6 +1,7 @@
 package com.jets.mytrips.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -95,13 +96,13 @@ public class CurrentTripsActivity extends AppCompatActivity
 
 
         ////////////////////////////
-
-        trips= dbAdapter.getUserTrips(2);
+        SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        trips= dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1));
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
-        myTripsListAdapter = new MyTripsListAdapter(getBaseContext(),trips);
+        myTripsListAdapter = new MyTripsListAdapter(getApplicationContext(),trips);
         creator = new SwipeMenuCreator() {
 
             @Override
@@ -198,7 +199,11 @@ public class CurrentTripsActivity extends AppCompatActivity
         super.onStart();
 
 
+    for (Trip trip : trips){
 
+        System.out.println("gggggggggggggggggggggggggggggg"+trip.getName());
+
+    }
 
 
 

@@ -27,7 +27,7 @@ public class DBAdapter {
         private static final String LOG = "DatabaseHelper";
 
         // Database Version
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 4;
 
         // Database Name
         private static final String DATABASE_NAME = "trips.db";
@@ -63,7 +63,7 @@ public class DBAdapter {
                 + "(" + ID + " TEXT, " + USER_ID + " INTEGER, " + TRIP_NAME + " TEXT, "
                 + TRIP_START_DEST + " TEXT, " + TRIP_START_X   + " DOUBLE, " + TRIP_START_Y  + " DOUBLE, " + TRIP_END_DEST + " TEXT, "
                 + TRIP_END_X + " DOUBLE, " + TRIP_END_Y + " DOUBLE, " + TRIP_DATE + " TEXT, " + TRIP_TIME + " INTEGER, " + TRIP_NOTES +
-                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER" + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER)";
+                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER," + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER)";
 
         // Notes table create statement
         private static final String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NOTES
@@ -146,7 +146,7 @@ public class DBAdapter {
             trip.setEndX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_X)));
             trip.setEndY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_Y)));
             trip.setDate(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_DATE)));
-            trip.setTime(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
+            trip.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
             trip.setStatus(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_STATUS)));
             trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
             trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
