@@ -97,7 +97,7 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
-        trips= dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1));
+        trips.addAll(dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1)));
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
@@ -158,7 +158,9 @@ public class CurrentTripsActivity extends AppCompatActivity
                     case 0:
                         // open
                         String out= String.valueOf(trips_list.getItemAtPosition(listpostion));
-
+                        Intent intent = new Intent(CurrentTripsActivity.this,AddOrEditTrip.class);
+                        intent.putExtra("tripPositionAtList",listpostion);
+                        startActivity(intent);
 
                         Toast.makeText(getApplicationContext(),out,Toast.LENGTH_SHORT).show();
                         break;

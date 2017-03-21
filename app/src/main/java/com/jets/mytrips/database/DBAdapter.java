@@ -103,6 +103,7 @@ public class DBAdapter {
 
         ContentValues values = new ContentValues();
         //id is auto incremented
+        values.put(DatabaseHelper.ID, trip.getId());
         values.put(DatabaseHelper.USER_ID, trip.getUserId());
         values.put(DatabaseHelper.TRIP_NAME, trip.getName());
         values.put(DatabaseHelper.TRIP_START_DEST, trip.getStart());
@@ -134,7 +135,7 @@ public class DBAdapter {
 
         // looping through all rows and adding to list
         c.moveToFirst();
-        while (c.moveToNext()) {
+        do  {
             Trip trip = new Trip();
             trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
@@ -153,7 +154,7 @@ public class DBAdapter {
             trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
 
             trips.add(trip);
-        }
+        } while (c.moveToNext());
 
         return trips;
     }
@@ -210,21 +211,21 @@ public class DBAdapter {
     public ArrayList<Note> getTripNotes(String tripId){
 
         ArrayList<Note> notes = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_NOTES+" where id ="+tripId;
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_NOTES+" WHERE tripId = '"+tripId+"'";
 
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
         c.moveToFirst();
-        while (c.moveToNext()) {
+        do {
             Note note = new Note();
             note.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             note.setTripId((c.getString(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
             note.setNote(c.getString(c.getColumnIndex(DatabaseHelper.NOTE)));
 
             notes.add(note);
-        }
+        } while( (c.moveToNext()));
 
         return notes;
     }

@@ -84,29 +84,8 @@ public class AddOrEditTrip extends AppCompatActivity {
 
         Intent intent = getIntent();
         tripPositionAtList = intent.getIntExtra("tripPositionAtList",-1);
+        System.out.println(tripPositionAtList);
 
-        if(tripPositionAtList==-1) {
-            trip = new Trip();
-            notes = new ArrayList<>();
-            tripId = UUID.randomUUID().toString().substring(10);
-            trip.setId(tripId);
-        }
-        else{
-            trip = TripListData.getTripsListInstance().get(tripPositionAtList);
-            tripFrom.setHint(trip.getStart());
-            tripTo.setHint(trip.getEnd());
-            tripName.setText(trip.getName());
-            tripDate.setText(trip.getDate());
-            tripTime.setText(trip.getTime()+"");
-            notes = new DBAdapter(getApplicationContext()).getTripNotes(trip.getId());
-            if(!notes.isEmpty()) {
-                for (Note note : notes) {
-                    TextView textView = new TextView(AddOrEditTrip.this);
-                    textView.setText(note.getNote());
-                    linearLayout.addView(textView);
-                }
-            }
-        }
 
 
 
@@ -248,10 +227,10 @@ public class AddOrEditTrip extends AppCompatActivity {
 
         save.setOnClickListener(new View.OnClickListener() {
             boolean flag_save =false;
-            @RequiresApi(api = Build.VERSION_CODES.N)
+
             @Override
             public void onClick(View v) {
-                if(tripName.getText().toString()!=null&&tripName.getText().toString().trim()!=""){
+                if(tripName.getText()!=null&&!tripName.getText().toString().trim().equals("")){
                     trip.setName(tripName.getText().toString());
                     flag_save=true;
                 }
@@ -262,7 +241,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                 }
 
 
-                if(trip.getStart()!=null&&trip.getStart()!=""){
+                if(trip.getStart()!=null&&!trip.getStart().equals("")){
                     flag_save=true;
                 }
                 else{
@@ -274,7 +253,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
 
 
-                if(trip.getEnd()!=null&&trip.getEnd()!=""){
+                if(trip.getEnd()!=null&&!trip.getEnd().equals("")){
                     flag_save=true;
                 }
                 else{
@@ -330,10 +309,14 @@ public class AddOrEditTrip extends AppCompatActivity {
                     trip.setTime( hours + ":" + minutes);
                     trip.setAlarmId((int) System.currentTimeMillis());
                     AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
-                    for (Note note : notes){
-                        new DBAdapter(AddOrEditTrip.this).addNote(note);
+                    if(!notes.isEmpty()) {
+
+                        for (Note note : notes) {
+
+                            System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                        }
+                        trip.setNotes(notes);
                     }
-                    trip.setNotes(notes);
                     new DBAdapter(AddOrEditTrip.this).addTrip(trip);
                     TripListData.getTripsListInstance().add(trip);
                     TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this,TripListData.getTripsListInstance()).notifyDataSetChanged();
@@ -344,6 +327,34 @@ public class AddOrEditTrip extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(tripPositionAtList==-1) {
+            trip = new Trip();
+            notes = new ArrayList<>();
+            tripId = UUID.randomUUID().toString().substring(10);
+            trip.setId(tripId);
+        }
+        else{
+            trip = TripListData.getTripsListInstance().get(tripPositionAtList);
+            tripFrom.setHint(trip.getStart());
+            tripTo.setHint(trip.getEnd());
+            tripName.setText(trip.getName());
+            tripDate.setText(trip.getDate());
+            tripTime.setText(trip.getTime()+"");
+            notes = new DBAdapter(getApplicationContext()).getTripNotes(trip.getId());
+            System.out.println("notessss size "+notes.size());
+            if(!notes.isEmpty()) {
+                for (Note note : notes) {
+                    TextView textView = new TextView(AddOrEditTrip.this);
+                    textView.setText(note.getNote());
+                    linearLayout.addView(textView);
+                }
+            }
+        }
     }
 }
 //    Calendar calendar = Calendar.getInstance();
