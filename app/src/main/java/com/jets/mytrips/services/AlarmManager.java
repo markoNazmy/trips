@@ -14,13 +14,13 @@ import com.jets.mytrips.beans.Trip;
 
 public class AlarmManager {
 
-    public static void setTask(Trip trip , Context mContext){
+    public static void setTask(Trip trip , Context mContext , long timeInMilies){
         Intent intent = new Intent(mContext,AddOrEditTrip.class);
         intent.putExtra("trip",trip);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,trip.getAlarmId(),intent,PendingIntent.FLAG_CANCEL_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            am.setExact(android.app.AlarmManager.RTC_WAKEUP,trip.getTime(),pendingIntent);
+            am.setExact(android.app.AlarmManager.RTC_WAKEUP,timeInMilies,pendingIntent);
         }
     }
 

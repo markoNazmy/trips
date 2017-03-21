@@ -22,7 +22,7 @@ public class Trip implements Parcelable{
     double endX;
     double endY;
     String date;
-    long time;
+    String time;
     String status;
     int done;
     ArrayList<Note> notes;
@@ -30,7 +30,7 @@ public class Trip implements Parcelable{
     int alarmId;
 
     public Trip(String id, int userId, String start, double startX, double startY, String end,
-                double endX, double endY, String date, long time, String status, int done,
+                double endX, double endY, String date, String time, String status, int done,
                 ArrayList<Note> notes, String image, int alarmId) {
         this.id = id;
         this.userId = userId;
@@ -64,7 +64,7 @@ public class Trip implements Parcelable{
         endX = in.readDouble();
         endY = in.readDouble();
         date = in.readString();
-        time = in.readLong();
+        time = in.readString();
         status = in.readString();
         done = in.readInt();
         image = in.readString();
@@ -163,11 +163,11 @@ public class Trip implements Parcelable{
         this.date = date;
     }
 
-    public long getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
@@ -228,7 +228,7 @@ public class Trip implements Parcelable{
         dest.writeDouble(endX);
         dest.writeDouble(endY);
         dest.writeString(date);
-        dest.writeLong(time);
+        dest.writeString(time);
         dest.writeString(status);
         dest.writeInt(done);
         dest.writeString(image);
