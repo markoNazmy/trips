@@ -1,6 +1,5 @@
 package com.jets.mytrips.services;
 
-import com.jets.mytrips.beans.User;
 
 /**
  * Created by Aya on 3/19/17.
@@ -8,7 +7,7 @@ import com.jets.mytrips.beans.User;
 
 public interface VolleyCallback {
 
-    void onSuccess(User user);
+    void onSuccess(Object response);
 
     void onFailure(String errorMessage);
 }

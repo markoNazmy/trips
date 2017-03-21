@@ -1,6 +1,7 @@
 package com.jets.mytrips.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -24,11 +25,11 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
+import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.MyTripsListAdapter;
 import com.jets.mytrips.services.TripListData;
-
-import org.w3c.dom.Text;
+import com.jets.mytrips.services.VolleyCallback;
 
 import java.util.ArrayList;
 
@@ -98,15 +99,15 @@ public class CurrentTripsActivity extends AppCompatActivity
 
 
         ////////////////////////////
-
-        trips = dbAdapter.getUserTrips(2);
+        SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        trips = dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1));
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
 
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
-        myTripsListAdapter = new MyTripsListAdapter(getBaseContext(), trips);
+        myTripsListAdapter = new MyTripsListAdapter(getApplicationContext(), trips);
         creator = new SwipeMenuCreator() {
 
             @Override
@@ -200,6 +201,15 @@ public class CurrentTripsActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+
+
+        for (Trip trip : trips) {
+
+            System.out.println("gggggggggggggggggggggggggggggg" + trip.getName());
+
+        }
+
+
     }
 
 
@@ -228,7 +238,21 @@ public class CurrentTripsActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_synchronize) {
+            ArrayList<Trip> trips = dbAdapter.getUserTrips(getSharedPreferences("MyTrips", MODE_PRIVATE).getInt("id", -1));
+            if (!trips.isEmpty()) {
+                TripController.getInstance(this).synchronizeUserTrips(trips, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(Object response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(CurrentTripsActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
             return true;
         }
 
@@ -244,7 +268,7 @@ public class CurrentTripsActivity extends AppCompatActivity
         if (id == R.id.nav_history) {
             // Handle the camera action
         } else if (id == R.id.nav_add_trip) {
-
+            startActivity(new Intent(getBaseContext(), AddOrEditTrip.class));
         } else if (id == R.id.nav_synchronize) {
 
         } else if (id == R.id.nav_logout) {

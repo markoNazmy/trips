@@ -170,7 +170,7 @@ public class AddOrEditTrip extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(tripNote.getText().toString()!=null&&tripNote.getText().toString().trim()!="") {
+                if(tripNote.getText().toString()!=null&&!tripNote.getText().toString().trim().equals("")) {
                     Note note = new Note();
                     note.setId(UUID.randomUUID().toString().substring(10));
                     note.setNote(tripNote.getText().toString());
@@ -259,17 +259,28 @@ public class AddOrEditTrip extends AppCompatActivity {
 
                 if(flag_save){
                     SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
-                    String user_id =sharedPreferences.getString("fullName", "");
-                    if (user_id!=null) {
-                        trip.setUserId(Integer.parseInt(user_id));
+                    int user_id =sharedPreferences.getInt("id", -1);
+                    if (user_id!=-1) {
+                        trip.setUserId(user_id);
                     }
+                    System.out.println("aaaaaaaaaaaaaaaaaaaaaaa"+user_id);
                     android.icu.util.Calendar calendar = android.icu.util.Calendar.getInstance();
-                    calendar.set(year, month, day,
+                    calendar.set(year, month+1, day,
                             hours, minutes, 0);
-                    int startTime = (int)calendar.getTimeInMillis();
+                    System.out.println("eeeeeeeeeeeeeeeee"+calendar.getTimeInMillis());
+                    long startTime = calendar.getTimeInMillis();
+                    System.out.println("aaaaaaaaaaaaaaaaaaa start " +trip.getStart() );
+                    //  noooooooo dateeeee
+                    trip.setImage("aaa");
+                    trip.setStatus("upcoming");
+                    trip.setDate("dsfds");
                     trip.setTime(startTime);
                     trip.setAlarmId((int) System.currentTimeMillis());
                     AlarmManager.setTask(trip,AddOrEditTrip.this);
+                    for (Note note : notes){
+                        new DBAdapter(AddOrEditTrip.this).addNote(note);
+                    }
+                    trip.setNotes(notes);
                     new DBAdapter(AddOrEditTrip.this).addTrip(trip);
                     TripListData.getTripsListInstance().add(trip);
                     TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this,TripListData.getTripsListInstance()).notifyDataSetChanged();

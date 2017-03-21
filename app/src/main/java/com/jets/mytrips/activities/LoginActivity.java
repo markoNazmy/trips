@@ -76,9 +76,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                 userController.login(email, password, new VolleyCallback() {
                     @Override
-                    public void onSuccess(User user) {
+                    public void onSuccess(Object response) {
                         // Switch to CurrentTripsActivity activity
-                        switchToCurrentTripsActivity(user.getFullName());
+                        switchToCurrentTripsActivity(((User) response).getFullName());
                     }
 
                     @Override
@@ -123,9 +123,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Send user data to the backend server
             userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
                 @Override
-                public void onSuccess(User user) {
+                public void onSuccess(Object response) {
                     // Switch to CurrentTripsActivity activity
-                    switchToCurrentTripsActivity(user.getFullName());
+                    switchToCurrentTripsActivity(((User) response).getFullName());
                 }
 
                 @Override
@@ -133,12 +133,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     UserController.getInstance(LoginActivity.this).registerUser(user,
                             new VolleyCallback() {
                                 @Override
-                                public void onSuccess(User user) {
+                                public void onSuccess(Object response) {
                                     // Save user data in preferences file
-                                    userController.saveUserSession(user);
+                                    userController.saveUserSession((User) response);
 
                                     // Switch to CurrentTripsActivity activity
-                                    switchToCurrentTripsActivity(user.getFullName());
+                                    switchToCurrentTripsActivity(((User) response).getFullName());
                                 }
 
                                 @Override

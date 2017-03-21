@@ -1,12 +1,14 @@
 package com.jets.mytrips.services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.jets.mytrips.R;
+import com.jets.mytrips.activities.TripDetails;
 import com.jets.mytrips.beans.Trip;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class MyTripsListAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         View rowView = convertView;
         ViewHolder viewHolder;
@@ -44,6 +46,15 @@ public class MyTripsListAdapter extends ArrayAdapter {
         viewHolder.getTripName().setText(values.get(position).getName());
         //viewHolder.getPlaceImageView().setImageResource();
         viewHolder.getDate().setText(values.get(position).getDate());
+
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, TripDetails.class);
+                intent.putExtra("TripDetails", values.get(position));
+                context.startActivity(intent);
+            }
+        });
 
         return rowView;
     }
