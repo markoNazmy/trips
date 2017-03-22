@@ -53,17 +53,19 @@ public class DBAdapter {
         private static final String TRIP_IS_DONE = "done";
         private static final String TRIP_IMAGE = "image";
         private static final String TRIP_ALARM_ID = "alarmId";
+        private static final String TRIP_MILLI_SECONDS = "milliSeconds";
 
         // NOTES Table - column names
         private static final String TRIP_ID = "tripId";
         private static final String NOTE = "note";
 
-        // Trips table create statement
         private static final String CREATE_TABLE_TRIPS = "CREATE TABLE " + TABLE_TRIPS
                 + "(" + ID + " TEXT, " + USER_ID + " INTEGER, " + TRIP_NAME + " TEXT, "
                 + TRIP_START_DEST + " TEXT, " + TRIP_START_X   + " DOUBLE, " + TRIP_START_Y  + " DOUBLE, " + TRIP_END_DEST + " TEXT, "
                 + TRIP_END_X + " DOUBLE, " + TRIP_END_Y + " DOUBLE, " + TRIP_DATE + " TEXT, " + TRIP_TIME + " TEXT, " + TRIP_NOTES +
-                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER," + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER)";
+                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER," + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER, " +
+                TRIP_MILLI_SECONDS + " INTEGER)";
+        //Note: in SQLite el integer haykaffy long (8 bytes in documentation)
 
         // Notes table create statement
         private static final String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NOTES
@@ -118,6 +120,7 @@ public class DBAdapter {
         values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
         values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
         values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
+        values.put(DatabaseHelper.TRIP_MILLI_SECONDS, trip.getMilliSeconds());
 
         // insert row
         long trip_id = db.insert(DatabaseHelper.TABLE_TRIPS, null, values);
@@ -152,6 +155,7 @@ public class DBAdapter {
             trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
             trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
             trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
+            trip.setMilliSeconds(c.getColumnIndex(DatabaseHelper.TRIP_MILLI_SECONDS));
 
             trips.add(trip);
         } while (c.moveToNext());
@@ -179,6 +183,7 @@ public class DBAdapter {
         values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
         values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
         values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
+        values.put(DatabaseHelper.TRIP_MILLI_SECONDS, trip.getMilliSeconds());
 
         // updating row
         return db.update(DatabaseHelper.TABLE_TRIPS, values, DatabaseHelper.ID + " = ?",
