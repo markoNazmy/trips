@@ -138,7 +138,7 @@ public class DBAdapter {
 
         // looping through all rows and adding to list
         c.moveToFirst();
-        do  {
+        while (c.moveToNext()) {
             Trip trip = new Trip();
             trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
@@ -158,7 +158,7 @@ public class DBAdapter {
             trip.setMilliSeconds(c.getColumnIndex(DatabaseHelper.TRIP_MILLI_SECONDS));
 
             trips.add(trip);
-        } while (c.moveToNext());
+        }
 
         return trips;
     }
