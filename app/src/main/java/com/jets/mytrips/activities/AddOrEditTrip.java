@@ -35,6 +35,7 @@ import com.jets.mytrips.services.TripListData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 public class AddOrEditTrip extends AppCompatActivity {
@@ -49,10 +50,7 @@ public class AddOrEditTrip extends AppCompatActivity {
     Button pickTime;
     Button addNote;
     Button save;
-//    ListView notesList;
     LinearLayout linearLayout;
-//    ArrayAdapter<String> tripListAdapter;
-//    ArrayList<String>notesText = new ArrayList<String>();
     ArrayList<Note>notes;
     int year;
     int month;
@@ -61,16 +59,21 @@ public class AddOrEditTrip extends AppCompatActivity {
     int minutes;
     Trip trip;
     String tripId ;
+    int tripPositionAtList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_edit_trip);
+
+
+
+
+
         tripName = (EditText) findViewById(R.id.trip_name);
         tripNote = (EditText) findViewById(R.id.note_text);
         tripStatus =(TextView) findViewById(R.id.status);
         tripDate =(TextView) findViewById(R.id.date_view);
         tripTime =(TextView) findViewById(R.id.time_view);
-//        notesList = (ListView) findViewById(R.id.notes_list);
         tripFrom = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.from_auto_complete);
         tripTo = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.to_auto_complete);
         pickDate =(Button)findViewById(R.id.pick_date) ;
@@ -78,14 +81,17 @@ public class AddOrEditTrip extends AppCompatActivity {
         addNote =(Button)findViewById(R.id.add_note) ;
         save =(Button)findViewById(R.id.save) ;
         linearLayout =(LinearLayout)findViewById(R.id.note_layout);
-        trip = new Trip();
-        notes = new ArrayList<>();
-        tripId = UUID.randomUUID().toString().substring(10);
-        trip.setId(tripId);
-//        tripListAdapter = new ArrayAdapter<String>(AddOrEditTrip.this,
-//                android.R.layout.simple_list_item_1, android.R.id.text1, notesText);
-//
-//        notesList.setAdapter(tripListAdapter);
+
+        Intent intent = getIntent();
+        tripPositionAtList = intent.getIntExtra("tripPositionAtList",-1);
+        System.out.println(tripPositionAtList);
+
+
+
+
+
+
+
         tripFrom.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -123,6 +129,14 @@ public class AddOrEditTrip extends AppCompatActivity {
             }
 
         });
+
+
+
+
+
+
+
+
         pickDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +160,14 @@ public class AddOrEditTrip extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+
+
+
+
+
+
+
+
         pickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +188,11 @@ public class AddOrEditTrip extends AppCompatActivity {
 
         });
 
+
+
+
+
+
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,29 +204,33 @@ public class AddOrEditTrip extends AppCompatActivity {
                     note.setTripId(tripId);
                     System.out.println(note.getNote());
                     tripNote.setText("");
-//                tripListAdapter.add(note.getNote());
-//                tripListAdapter.notifyDataSetChanged();
                     TextView textView = new TextView(AddOrEditTrip.this);
                     textView.setText(note.getNote());
                     linearLayout.addView(textView);
                     notes.add(note);
-//                ArrayList<String>notesText = new ArrayList<String>();
-//                for (int i =0;i<notes.size();i++){
-//                    notesText.add(notes.get(i).getNote());
-//                }
                 }
                 else{
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you did'nt entered a note to add !", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
+
             }
         });
+
+
+
+
+
+
+
+
+
         save.setOnClickListener(new View.OnClickListener() {
             boolean flag_save =false;
-            @RequiresApi(api = Build.VERSION_CODES.N)
+
             @Override
             public void onClick(View v) {
-                if(tripName.getText().toString()!=null&&tripName.getText().toString().trim()!=""){
+                if(tripName.getText()!=null&&!tripName.getText().toString().trim().equals("")){
                     trip.setName(tripName.getText().toString());
                     flag_save=true;
                 }
@@ -210,7 +241,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                 }
 
 
-                if(trip.getStart()!=null&&trip.getStart()!=""){
+                if(trip.getStart()!=null&&!trip.getStart().equals("")){
                     flag_save=true;
                 }
                 else{
@@ -222,7 +253,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
 
 
-                if(trip.getEnd()!=null&&trip.getEnd()!=""){
+                if(trip.getEnd()!=null&&!trip.getEnd().equals("")){
                     flag_save=true;
                 }
                 else{
@@ -264,31 +295,75 @@ public class AddOrEditTrip extends AppCompatActivity {
                         trip.setUserId(user_id);
                     }
                     System.out.println("aaaaaaaaaaaaaaaaaaaaaaa"+user_id);
-                    android.icu.util.Calendar calendar = android.icu.util.Calendar.getInstance();
-                    calendar.set(year, month+1, day,
-                            hours, minutes, 0);
-                    System.out.println("eeeeeeeeeeeeeeeee"+calendar.getTimeInMillis());
-                    long startTime = calendar.getTimeInMillis();
-                    System.out.println("aaaaaaaaaaaaaaaaaaa start " +trip.getStart() );
+
+                    long diff_in_ms;
+                    long currentDay= System.currentTimeMillis();
+                    GregorianCalendar nextDay=new  GregorianCalendar (year,month+1,day,hours,minutes,0);
+
+                    diff_in_ms=nextDay. getTimeInMillis()-currentDay;
+                    //System.out.println("aaaaaaaaaaaaaaaaaaa start " +trip.getStart() );
                     //  noooooooo dateeeee
                     trip.setImage("aaa");
                     trip.setStatus("upcoming");
-                    trip.setDate("dsfds");
-                    trip.setTime(startTime);
+                    trip.setDate(day + "/" + (month + 1) + "/" + year);
+                    trip.setTime( hours + ":" + minutes);
                     trip.setAlarmId((int) System.currentTimeMillis());
-                    AlarmManager.setTask(trip,AddOrEditTrip.this);
-                    for (Note note : notes){
-                        new DBAdapter(AddOrEditTrip.this).addNote(note);
+                    AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
+                    if(!notes.isEmpty()) {
+
+                        for (Note note : notes) {
+
+                            System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                        }
+                        trip.setNotes(notes);
                     }
-                    trip.setNotes(notes);
                     new DBAdapter(AddOrEditTrip.this).addTrip(trip);
                     TripListData.getTripsListInstance().add(trip);
                     TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this,TripListData.getTripsListInstance()).notifyDataSetChanged();
                     Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
                     startActivity(intent);
                 }
+
             }
         });
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(tripPositionAtList==-1) {
+            trip = new Trip();
+            notes = new ArrayList<>();
+            tripId = UUID.randomUUID().toString().substring(10);
+            trip.setId(tripId);
+        }
+        else{
+            trip = TripListData.getTripsListInstance().get(tripPositionAtList);
+            tripFrom.setHint(trip.getStart());
+            tripTo.setHint(trip.getEnd());
+            tripName.setText(trip.getName());
+            tripDate.setText(trip.getDate());
+            tripTime.setText(trip.getTime()+"");
+            notes = new DBAdapter(getApplicationContext()).getTripNotes(trip.getId());
+            System.out.println("notessss size "+notes.size());
+            if(!notes.isEmpty()) {
+                for (Note note : notes) {
+                    TextView textView = new TextView(AddOrEditTrip.this);
+                    textView.setText(note.getNote());
+                    linearLayout.addView(textView);
+                }
+            }
+        }
+    }
 }
+//    Calendar calendar = Calendar.getInstance();
+//                calendar.set(year, month+1, day,
+//                        hours, minutes, 0);
+//                System.out.println("eeeeeeeeeeeeeeeee"+(calendar.getTimeInMillis()-System.currentTimeMillis()));
+//                long diff_in_ms;
+//                long currentDay= System.currentTimeMillis();
+//                GregorianCalendar nextDay=new  GregorianCalendar (year,month+1,day,hours,minutes,0);
+//
+//                diff_in_ms=nextDay. getTimeInMillis()-currentDay;
+//                System.out.println("nowwwwwwwwwwwwwwwwwwww"+diff_in_ms);

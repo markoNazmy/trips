@@ -2,6 +2,7 @@ package com.jets.mytrips.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -96,7 +97,7 @@ public class UserController {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context.getApplicationContext(), "Something wrong happened", Toast.LENGTH_SHORT).show();
+                callback.onFailure("Something wrong happened");
             }
         }) {
             @Override

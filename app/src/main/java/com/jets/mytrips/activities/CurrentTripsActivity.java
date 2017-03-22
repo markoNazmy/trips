@@ -100,7 +100,7 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
-        trips = dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1));
+        trips.addAll(dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1)));
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
 
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
@@ -162,7 +162,9 @@ public class CurrentTripsActivity extends AppCompatActivity
                     case 0:
                         // open
                         String out = String.valueOf(trips_list.getItemAtPosition(listpostion));
-
+                        Intent intent = new Intent(CurrentTripsActivity.this, AddOrEditTrip.class);
+                        intent.putExtra("tripPositionAtList", listpostion);
+                        startActivity(intent);
 
                         Toast.makeText(getApplicationContext(), out, Toast.LENGTH_SHORT).show();
                         break;
@@ -244,7 +246,7 @@ public class CurrentTripsActivity extends AppCompatActivity
                 TripController.getInstance(this).synchronizeUserTrips(trips, new VolleyCallback() {
                     @Override
                     public void onSuccess(Object response) {
-
+                        Toast.makeText(CurrentTripsActivity.this, "Your data has been synchronized successfully", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
