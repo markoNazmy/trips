@@ -27,7 +27,7 @@ public class DBAdapter {
         private static final String LOG = "DatabaseHelper";
 
         // Database Version
-        private static final int DATABASE_VERSION = 5;
+        private static final int DATABASE_VERSION = 6;
 
         // Database Name
         private static final String DATABASE_NAME = "trips.db";
@@ -137,8 +137,8 @@ public class DBAdapter {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        c.moveToFirst();
-        while (c.moveToNext()) {
+
+        while (c.moveToNext()){
             Trip trip = new Trip();
             trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
@@ -159,6 +159,7 @@ public class DBAdapter {
 
             trips.add(trip);
         }
+
 
         return trips;
     }
@@ -222,15 +223,15 @@ public class DBAdapter {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        c.moveToFirst();
-        do {
+
+        while( (c.moveToNext())){
             Note note = new Note();
             note.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             note.setTripId((c.getString(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
             note.setNote(c.getString(c.getColumnIndex(DatabaseHelper.NOTE)));
 
             notes.add(note);
-        } while( (c.moveToNext()));
+        }
 
         return notes;
     }

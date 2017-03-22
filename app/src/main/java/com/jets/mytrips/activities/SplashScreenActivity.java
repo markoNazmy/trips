@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.jets.mytrips.R;
 
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -18,6 +19,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        System.out.println("timeeeeeeeeeeeeeeee "+ (new Random().nextInt(1000 - 5) + 5));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
