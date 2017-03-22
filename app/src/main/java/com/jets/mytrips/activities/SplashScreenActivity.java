@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import com.jets.mytrips.R;
 
+import java.util.GregorianCalendar;
+
 public class SplashScreenActivity extends AppCompatActivity {
 
     private final int SPLASH_DISPLAY_LENGTH = 3000;
@@ -16,7 +18,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
