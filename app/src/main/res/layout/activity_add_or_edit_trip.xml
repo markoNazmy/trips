@@ -14,100 +14,100 @@
     >
     <ScrollView
         android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        android:weightSum="20"
-
-        <EditText
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/trip_name"
-            android:hint="trip name ....." />
+            android:layout_height="match_parent">
+            android:weightSum="20"
 
-        <TextView
-            android:text="pick trip start point"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/textView4" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/trip_name"
+                android:hint="trip name ....." />
 
-        <fragment
-            android:id="@+id/from_auto_complete"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_weight="1" />
+            <TextView
+                android:text="pick trip start point"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/textView4" />
 
-        <TextView
-            android:text="pick trip end point"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/textView3" />
+            <fragment
+                android:id="@+id/from_auto_complete"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_weight="1" />
 
-        <fragment
-        android:id="@+id/to_auto_complete"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_weight="1" />
+            <TextView
+                android:text="pick trip end point"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/textView3" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/status"
-            android:layout_weight="1" />
+            <fragment
+                android:id="@+id/to_auto_complete"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_weight="1" />
 
-        <Button
-            android:text="pick trip date"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/pick_date"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/status"
+                android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/date_view" />
+            <Button
+                android:text="pick trip date"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/pick_date"
+                android:layout_weight="1" />
 
-        <Button
-            android:text="pick trip time"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/pick_time"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/date_view" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/time_view" />
+            <Button
+                android:text="pick trip time"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/pick_time"
+                android:layout_weight="1" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/note_text"
-            android:layout_weight="1"
-            android:hint="add note ....." />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/time_view" />
 
-        <Button
-            android:text="add note"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/add_note"
-            android:layout_weight="1" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/note_text"
+                android:layout_weight="1"
+                android:hint="add note ....." />
+
+            <Button
+                android:text="add note"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/add_note"
+                android:layout_weight="1" />
 
 
-        <!--<ListView-->
+            <!--<ListView-->
             <!--android:layout_width="match_parent"-->
             <!--android:scrollbars="vertical"-->
             <!--android:layout_height="0dp"-->
@@ -115,20 +115,43 @@
             <!--android:id="@+id/notes_list" />-->
 
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:id="@+id/note_layout"></LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:id="@+id/note_layout"></LinearLayout>
 
-        <Button
-            android:text="save"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/save"
-            android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:weightSum="4"
+                android:id="@+id/done_layout">
 
-    </LinearLayout>
+
+
+                <TextView
+                    android:text="check it as a done trip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/doneText"
+                    android:layout_weight="3" />
+                <CheckBox
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/done_checkBox"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Button
+                android:text="save"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/save"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>
