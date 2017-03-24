@@ -63,7 +63,7 @@ public class MapTripsHistory extends FragmentActivity implements OnMapReadyCallb
         requestQueue = singleton.getRequestQueue();
         rootParser = new RootParser();
         trips = new DBAdapter(getApplicationContext()).getUserTrips(sharedPreferences.getInt("id", -1));
-        trips.remove(0);
+        //trips.remove(0);
         for (Trip trip : trips) {
 
             String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + trip.getStartX() + "," + trip.getStartY() + "&destination=" + trip.getEndX() + "," + trip.getEndY() + "&key=AIzaSyA40U80aJecaH-sS08dlG4smR_Tlbjb2TA";
