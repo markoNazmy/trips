@@ -122,6 +122,29 @@
             android:layout_weight="6"
             android:id="@+id/note_layout"></LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="4"
+            android:id="@+id/done_layout">
+
+
+
+            <TextView
+                android:text="check it as a done trip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/doneText"
+                android:layout_weight="3" />
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/done_checkBox"
+                android:layout_weight="1" />
+        </LinearLayout>
+
         <Button
             android:text="save"
             android:layout_width="match_parent"

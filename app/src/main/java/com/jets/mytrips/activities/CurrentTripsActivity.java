@@ -55,9 +55,8 @@ public class CurrentTripsActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Intent intent = new Intent(getBaseContext(), AddOrEditTrip.class);
+
+                Intent intent = new Intent(getBaseContext(),AddOrEditTrip.class);
                 startActivity(intent);
             }
         });
@@ -291,7 +290,8 @@ public class CurrentTripsActivity extends AppCompatActivity
         if (id == R.id.nav_history) {
 
         } else if (id == R.id.nav_map_history) {
-
+            Intent intent = new Intent(getBaseContext(),MapTripsHistory.class);
+            startActivity(intent);
         } else if (id == R.id.nav_add_trip) {
             startActivity(new Intent(getBaseContext(), AddOrEditTrip.class));
         } else if (id == R.id.nav_synchronize) {
