@@ -96,7 +96,9 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        trips.clear();
         trips.addAll(dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1)));
+        trips.remove(0);
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
@@ -253,7 +255,8 @@ public class CurrentTripsActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            Intent intent = new Intent(getBaseContext(),MapTripsHistory.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
