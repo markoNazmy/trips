@@ -4,16 +4,22 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -25,7 +31,6 @@ import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Note;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
-//import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.TripListData;
 
@@ -365,7 +370,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
 
 
-            }
+                }
 
 
         });
