@@ -11,22 +11,31 @@ import java.util.ArrayList;
  */
 
 public class TripListData {
-    private static ArrayList<Trip> tripsList;
-    private static MyTripsListAdapter myTripsListAdapter ;
+    private static ArrayList<Trip> upcomingTripsList;
+    private static ArrayList<Trip> historicalTripsList;
+    private static MyTripsListAdapter myTripsListAdapter;
+
     private TripListData() {
     }
 
-    public static synchronized ArrayList<Trip> getTripsListInstance() {
-        if (tripsList == null) {
-            tripsList = new ArrayList<>();
+    public static synchronized ArrayList<Trip> getUpcomingTripsListInstance() {
+        if (upcomingTripsList == null) {
+            upcomingTripsList = new ArrayList<>();
         }
-        return tripsList;
+        return upcomingTripsList;
     }
+
+    public static synchronized ArrayList<Trip> getHistoricalTripsListInstance() {
+        if (historicalTripsList == null) {
+            historicalTripsList = new ArrayList<>();
+        }
+        return historicalTripsList;
+    }
+
     public static synchronized MyTripsListAdapter getMyTripsListAdapterInstance(Context context, ArrayList<Trip> resource) {
         if (myTripsListAdapter == null) {
-            myTripsListAdapter = new MyTripsListAdapter(context,resource);
+            myTripsListAdapter = new MyTripsListAdapter(context, resource);
         }
         return myTripsListAdapter;
     }
-
 }

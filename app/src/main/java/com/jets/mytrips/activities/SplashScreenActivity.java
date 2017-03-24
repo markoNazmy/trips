@@ -7,11 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.jets.mytrips.R;
+import com.jets.mytrips.services.Switcher;
 
-import java.util.GregorianCalendar;
-import java.util.Random;
-
-public class SplashScreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity implements Switcher {
 
     private final int SPLASH_DISPLAY_LENGTH = 3000;
 
@@ -19,20 +17,24 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        System.out.println("timeeeeeeeeeeeeeeee "+ (new Random().nextInt(1000 - 5) + 5));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
                 if (sharedPreferences.contains("email")) {
-                    Intent intent = new Intent(SplashScreenActivity.this, CurrentTripsActivity.class);
-                    intent.putExtra("username", sharedPreferences.getString("fullName", ""));
-                    startActivity(intent);
+                    switchToCurrentTripsActivity(sharedPreferences.getString("fullName", ""));
                 } else {
                     startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                 }
                 SplashScreenActivity.this.finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
+    }
+
+    @Override
+    public void switchToCurrentTripsActivity(String userFullName) {
+        Intent intent = new Intent(SplashScreenActivity.this, CurrentTripsActivity.class);
+        intent.putExtra("username", userFullName);
+        startActivity(intent);
     }
 }

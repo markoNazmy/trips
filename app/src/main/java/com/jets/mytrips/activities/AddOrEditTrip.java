@@ -30,6 +30,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Note;
 import com.jets.mytrips.beans.Trip;
+import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.TripListData;
@@ -312,6 +313,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                     trip.setTime( tripTime.getText().toString());
                 }
 
+                TripController tripController = TripController.getInstance(AddOrEditTrip.this);
                 SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
                 int user_id = sharedPreferences.getInt("id", -1);
                 if (user_id != -1) {
@@ -365,8 +367,10 @@ public class AddOrEditTrip extends AppCompatActivity {
                             TripListData.getTripsListInstance().add(roundTrip);
                         }
                         new DBAdapter(AddOrEditTrip.this).addTrip(trip);
-                        TripListData.getTripsListInstance().add(trip);
-                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getTripsListInstance()).notifyDataSetChanged();
+                        // User trips is now asynchronous
+                        tripController.setUserTripsSynchronized(false);
+                        TripListData.getUpcomingTripsListInstance().add(trip);
+                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
                         startActivity(intent);
                     }
@@ -393,9 +397,11 @@ public class AddOrEditTrip extends AppCompatActivity {
                         trip.setMilliSeconds(diff_in_ms);
                         AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
                         new DBAdapter(AddOrEditTrip.this).updateTrip(trip);
-                        TripListData.getTripsListInstance().remove(tripPositionAtList);
-                        TripListData.getTripsListInstance().add(tripPositionAtList, trip);
-                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getTripsListInstance()).notifyDataSetChanged();
+                        // User trips is now asynchronous
+                        tripController.setUserTripsSynchronized(false);
+                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
+                        TripListData.getUpcomingTripsListInstance().add(tripPositionAtList,trip);
+                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
                         startActivity(intent);
                     }
@@ -424,7 +430,7 @@ public class AddOrEditTrip extends AppCompatActivity {
         }
         else{
             notesForUpdate=new ArrayList<>();
-            trip = TripListData.getTripsListInstance().get(tripPositionAtList);
+            trip = TripListData.getUpcomingTripsListInstance().get(tripPositionAtList);
             tripFrom.setHint(trip.getStart());
             tripTo.setHint(trip.getEnd());
             tripName.setText(trip.getName());

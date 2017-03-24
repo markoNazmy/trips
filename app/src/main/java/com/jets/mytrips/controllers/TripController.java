@@ -1,14 +1,13 @@
 package com.jets.mytrips.controllers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.jets.mytrips.beans.User;
+import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.services.JSONParser;
 import com.jets.mytrips.services.VolleyCallback;
 import com.jets.mytrips.services.VolleySingleton;
@@ -16,35 +15,43 @@ import com.jets.mytrips.services.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Aya on 3/17/17.
+ * Created by Aya on 3/21/17.
  */
 
-public class UserController {
-
-    private static UserController userController;
+public class TripController {
+    private static TripController tripController;
     private VolleySingleton volleySingleton;
-    private Context context;
     private JSONParser jsonParser;
+    private boolean isUserTripsSynchronized;
 
-    private UserController(Context context) {
+    private TripController(Context context) {
         volleySingleton = VolleySingleton.getInstance(context);
-        this.context = context;
         jsonParser = JSONParser.getInstance();
+        isUserTripsSynchronized = false;
     }
 
-    public static synchronized UserController getInstance(Context context) {
-        if (userController == null) {
-            userController = new UserController(context);
+    public boolean isUserTripsSynchronized() {
+        return isUserTripsSynchronized;
+    }
+
+    public void setUserTripsSynchronized(boolean userTripsSynchronized) {
+        isUserTripsSynchronized = userTripsSynchronized;
+    }
+
+    public static synchronized TripController getInstance(Context context) {
+        if (tripController == null) {
+            tripController = new TripController(context);
         }
-        return userController;
+        return tripController;
     }
 
-    public void registerUser(final User user, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/RegisterServlet";
+    public void synchronizeUserTrips(final ArrayList<Trip> trips, final VolleyCallback callback) {
+        String url = "http://192.168.1.4:8081/MyTripsBackend/SynchronizeServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -54,7 +61,7 @@ public class UserController {
                     if (jsonObject.getBoolean("success")) {
                         callback.onSuccess(true);
                     } else {
-                        callback.onFailure("Email already exists");
+                        callback.onFailure("Something wrong happened!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -69,7 +76,7 @@ public class UserController {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("json", jsonParser.prepareUserJsonString(user));
+                params.put("json", jsonParser.convertTripsToJsonString(trips));
                 return params;
             }
         };
@@ -77,22 +84,18 @@ public class UserController {
         volleySingleton.addToRequestQueue(stringRequest);
     }
 
-    public void login(final String email, final String password, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/LoginServlet";
+    public void getUserTrips(final int userId, final VolleyCallback callback) {
+        String url = "http://192.168.1.4:8081/MyTripsBackend/GetTripsServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (!response.equals("{}")) {
-                    User user = jsonParser.getUserFromJsonSting(response);
-
-                    // Save user data in preferences file
-                    saveUserSession(user);
-
-                    callback.onSuccess(user);
-                } else {
-                    callback.onFailure("Invalid email or password");
+                    ArrayList<Trip> trips = jsonParser.getUserTripsFromJsonString(response);
+                    callback.onSuccess(trips);
+                    return;
                 }
+                callback.onFailure("");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -103,19 +106,11 @@ public class UserController {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("json", jsonParser.prepareJsonStringForSignIn(email, password));
+                params.put("userId", String.valueOf(userId));
                 return params;
             }
         };
 
         volleySingleton.addToRequestQueue(stringRequest);
-    }
-
-    public void saveUserSession(User user) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("MyTrips", context.MODE_PRIVATE).edit();
-        editor.putInt("id", user.getId());
-        editor.putString("email", user.getEmail());
-        editor.putString("fullName", user.getFullName());
-        editor.commit();
     }
 }
