@@ -3,14 +3,13 @@ package com.jets.mytrips.beans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rocke on 3/14/2017.
  */
 
-public class Trip implements Parcelable{
+public class Trip implements Parcelable {
 
     String id;
     int userId;
@@ -27,11 +26,12 @@ public class Trip implements Parcelable{
     int done;
     ArrayList<Note> notes;
     String image;
+    long milliSeconds;
     int alarmId;
 
     public Trip(String id, int userId, String start, double startX, double startY, String end,
                 double endX, double endY, String date, String time, String status, int done,
-                ArrayList<Note> notes, String image, int alarmId) {
+                ArrayList<Note> notes, String image, int alarmId, long milliSeconds) {
         this.id = id;
         this.userId = userId;
         this.start = start;
@@ -47,9 +47,10 @@ public class Trip implements Parcelable{
         this.notes = notes;
         this.image = image;
         this.alarmId = alarmId;
+        this.milliSeconds = milliSeconds;
     }
 
-    public Trip(){
+    public Trip() {
 
     }
 
@@ -69,6 +70,7 @@ public class Trip implements Parcelable{
         done = in.readInt();
         image = in.readString();
         alarmId = in.readInt();
+        milliSeconds = in.readLong();
     }
 
     public static final Creator<Trip> CREATOR = new Creator<Trip>() {
@@ -203,12 +205,12 @@ public class Trip implements Parcelable{
         this.image = image;
     }
 
-    public int getAlarmId() {
-        return alarmId;
+    public long getMilliSeconds() {
+        return milliSeconds;
     }
 
-    public void setAlarmId(int alarmId) {
-        this.alarmId = alarmId;
+    public void setMilliSeconds(long milliSeconds) {
+        this.milliSeconds = milliSeconds;
     }
 
     @Override
@@ -233,5 +235,14 @@ public class Trip implements Parcelable{
         dest.writeInt(done);
         dest.writeString(image);
         dest.writeInt(alarmId);
+        dest.writeLong(milliSeconds);
+    }
+
+    public int getAlarmId() {
+        return alarmId;
+    }
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
     }
 }

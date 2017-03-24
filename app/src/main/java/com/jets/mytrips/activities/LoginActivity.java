@@ -17,16 +17,25 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jets.mytrips.R;
+import com.jets.mytrips.beans.Note;
+import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.beans.User;
+import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.controllers.UserController;
+import com.jets.mytrips.database.DBAdapter;
+import com.jets.mytrips.services.Switcher;
+import com.jets.mytrips.services.TripListData;
 import com.jets.mytrips.services.Validator;
 import com.jets.mytrips.services.VolleyCallback;
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+import java.util.ArrayList;
+
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, Switcher {
 
     private GoogleApiClient mGoogleApiClient;
     private final int RC_SIGN_IN = 6;
     private UserController userController;
+    private TripController tripController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_login);
 
         userController = UserController.getInstance(this);
+        tripController = TripController.getInstance(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -47,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Customize google sign-in button
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-        signInButton.setColorScheme(SignInButton.COLOR_DARK);
+        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,8 +87,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 userController.login(email, password, new VolleyCallback() {
                     @Override
                     public void onSuccess(Object response) {
-                        // Switch to CurrentTripsActivity activity
-                        switchToCurrentTripsActivity(((User) response).getFullName());
+                        // Get user trips from backend and insert them in SQLite database
+                        getUserTrips((User) response);
                     }
 
                     @Override
@@ -124,8 +134,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
                 @Override
                 public void onSuccess(Object response) {
-                    // Switch to CurrentTripsActivity activity
-                    switchToCurrentTripsActivity(((User) response).getFullName());
+                    // Get user trips from backend and insert them in SQLite database
+                    getUserTrips((User) response);
                 }
 
                 @Override
@@ -134,11 +144,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             new VolleyCallback() {
                                 @Override
                                 public void onSuccess(Object response) {
-                                    // Save user data in preferences file
-                                    userController.saveUserSession((User) response);
 
-                                    // Switch to CurrentTripsActivity activity
-                                    switchToCurrentTripsActivity(((User) response).getFullName());
+                                    userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
+                                        @Override
+                                        public void onSuccess(Object response) {
+                                            // Get user trips from backend and insert them in SQLite database
+                                            getUserTrips((User) response);
+                                        }
+
+                                        @Override
+                                        public void onFailure(String errorMessage) {
+                                            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
 
                                 @Override
@@ -151,10 +169,40 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-    private void switchToCurrentTripsActivity(String userFullName) {
+    @Override
+    public void switchToCurrentTripsActivity(String userFullName) {
         Intent intent = new Intent(LoginActivity.this, CurrentTripsActivity.class);
         intent.putExtra("username", userFullName);
         LoginActivity.this.startActivity(intent);
         LoginActivity.this.finish();
+    }
+
+    private void getUserTrips(final User user) {
+
+        tripController.getUserTrips(user.getId(), new VolleyCallback() {
+            @Override
+            public void onSuccess(Object response) {
+                DBAdapter dbAdapter = new DBAdapter(getBaseContext());
+                for (Trip trip : (ArrayList<Trip>) response) {
+                    dbAdapter.addTrip(trip);
+                    ArrayList<Note> tripNotes = trip.getNotes();
+                    if (!tripNotes.isEmpty()) {
+                        for (Note note : tripNotes) {
+                            dbAdapter.addNote(note);
+                        }
+                    }
+                }
+                tripController.setUserTripsSynchronized(true);
+                // Switch to CurrentTripsActivity activity
+                switchToCurrentTripsActivity(user.getFullName());
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                tripController.setUserTripsSynchronized(true);
+                // Switch to CurrentTripsActivity activity
+                switchToCurrentTripsActivity(user.getFullName());
+            }
+        });
     }
 }

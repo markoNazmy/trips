@@ -66,7 +66,14 @@ public class JSONParser {
 
     public String convertTripsToJsonString(ArrayList<Trip> trips) {
         Gson gson = new Gson();
-        return gson.toJson(trips, new TypeToken<ArrayList<Trip>>(){}.getType());
+        return gson.toJson(trips, new TypeToken<ArrayList<Trip>>() {
+        }.getType());
+    }
+
+    public ArrayList<Trip> getUserTripsFromJsonString(String jsonString) {
+        Gson gson = new Gson();
+        return gson.fromJson(jsonString, new TypeToken<ArrayList<Trip>>() {
+        }.getType());
     }
 
     public ArrayList<Trip> convertJsonArrayToTrips(JSONObject jsonObject) {

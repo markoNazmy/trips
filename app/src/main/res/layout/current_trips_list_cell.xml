@@ -26,6 +26,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Trip name"
+            android:textColor="@color/colorPrimary"
             android:textSize="20dp" />
 
         <TextView
@@ -35,6 +36,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Date"
+            android:textColor="@color/colorPrimary"
             android:textSize="20dp" />
 
     </LinearLayout>

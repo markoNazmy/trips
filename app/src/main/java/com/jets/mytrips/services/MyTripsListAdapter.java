@@ -47,15 +47,6 @@ public class MyTripsListAdapter extends ArrayAdapter {
         //viewHolder.getPlaceImageView().setImageResource();
         viewHolder.getDate().setText(values.get(position).getDate());
 
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, TripDetails.class);
-                intent.putExtra("TripDetails", values.get(position));
-                context.startActivity(intent);
-            }
-        });
-
         return rowView;
     }
 

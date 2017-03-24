@@ -2,8 +2,6 @@ package com.jets.mytrips.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -28,10 +26,12 @@ import java.util.Map;
 public class UserController {
 
     private static UserController userController;
+    private VolleySingleton volleySingleton;
     private Context context;
     private JSONParser jsonParser;
 
     private UserController(Context context) {
+        volleySingleton = VolleySingleton.getInstance(context);
         this.context = context;
         jsonParser = JSONParser.getInstance();
     }
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     public void registerUser(final User user, final VolleyCallback callback) {
-        String url = "http://10.118.50.95:8081/MyTripsBackend/RegisterServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/RegisterServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -52,7 +52,7 @@ public class UserController {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.getBoolean("success")) {
-                        callback.onSuccess(user);
+                        callback.onSuccess(true);
                     } else {
                         callback.onFailure("Email already exists");
                     }
@@ -63,7 +63,7 @@ public class UserController {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onFailure("Something wrong happened");
+                callback.onFailure(volleySingleton.identifyVolleyErrors(error));
             }
         }) {
             @Override
@@ -74,11 +74,11 @@ public class UserController {
             }
         };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
+        volleySingleton.addToRequestQueue(stringRequest);
     }
 
     public void login(final String email, final String password, final VolleyCallback callback) {
-        String url = "http://10.118.50.95:8081/MyTripsBackend/LoginServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/LoginServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -97,7 +97,7 @@ public class UserController {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onFailure("Something wrong happened");
+                callback.onFailure(volleySingleton.identifyVolleyErrors(error));
             }
         }) {
             @Override
@@ -108,7 +108,7 @@ public class UserController {
             }
         };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
+        volleySingleton.addToRequestQueue(stringRequest);
     }
 
     public void saveUserSession(User user) {

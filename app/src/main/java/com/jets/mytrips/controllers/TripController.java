@@ -25,12 +25,22 @@ import java.util.Map;
 
 public class TripController {
     private static TripController tripController;
-    private Context context;
+    private VolleySingleton volleySingleton;
     private JSONParser jsonParser;
+    private boolean isUserTripsSynchronized;
 
     private TripController(Context context) {
-        this.context = context;
+        volleySingleton = VolleySingleton.getInstance(context);
         jsonParser = JSONParser.getInstance();
+        isUserTripsSynchronized = false;
+    }
+
+    public boolean isUserTripsSynchronized() {
+        return isUserTripsSynchronized;
+    }
+
+    public void setUserTripsSynchronized(boolean userTripsSynchronized) {
+        isUserTripsSynchronized = userTripsSynchronized;
     }
 
     public static synchronized TripController getInstance(Context context) {
@@ -41,7 +51,7 @@ public class TripController {
     }
 
     public void synchronizeUserTrips(final ArrayList<Trip> trips, final VolleyCallback callback) {
-        String url = "http://10.118.50.95:8081/MyTripsBackend/SynchronizeServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/SynchronizeServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -51,7 +61,7 @@ public class TripController {
                     if (jsonObject.getBoolean("success")) {
                         callback.onSuccess(true);
                     } else {
-                        callback.onFailure("Something wrong happened");
+                        callback.onFailure("Something wrong happened!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -60,7 +70,7 @@ public class TripController {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onFailure("Something wrong happened");
+                callback.onFailure(volleySingleton.identifyVolleyErrors(error));
             }
         }) {
             @Override
@@ -71,7 +81,36 @@ public class TripController {
             }
         };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
+        volleySingleton.addToRequestQueue(stringRequest);
+    }
 
+    public void getUserTrips(final int userId, final VolleyCallback callback) {
+        String url = "http://192.168.1.4:8081/MyTripsBackend/GetTripsServlet";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (!response.equals("{}")) {
+                    ArrayList<Trip> trips = jsonParser.getUserTripsFromJsonString(response);
+                    callback.onSuccess(trips);
+                    return;
+                }
+                callback.onFailure("");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onFailure(volleySingleton.identifyVolleyErrors(error));
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("userId", String.valueOf(userId));
+                return params;
+            }
+        };
+
+        volleySingleton.addToRequestQueue(stringRequest);
     }
 }

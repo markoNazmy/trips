@@ -27,7 +27,7 @@ public class DBAdapter {
         private static final String LOG = "DatabaseHelper";
 
         // Database Version
-        private static final int DATABASE_VERSION = 5;
+        private static final int DATABASE_VERSION = 6;
 
         // Database Name
         private static final String DATABASE_NAME = "trips.db";
@@ -53,17 +53,19 @@ public class DBAdapter {
         private static final String TRIP_IS_DONE = "done";
         private static final String TRIP_IMAGE = "image";
         private static final String TRIP_ALARM_ID = "alarmId";
+        private static final String TRIP_MILLI_SECONDS = "milliSeconds";
 
         // NOTES Table - column names
         private static final String TRIP_ID = "tripId";
         private static final String NOTE = "note";
 
-        // Trips table create statement
         private static final String CREATE_TABLE_TRIPS = "CREATE TABLE " + TABLE_TRIPS
                 + "(" + ID + " TEXT, " + USER_ID + " INTEGER, " + TRIP_NAME + " TEXT, "
                 + TRIP_START_DEST + " TEXT, " + TRIP_START_X   + " DOUBLE, " + TRIP_START_Y  + " DOUBLE, " + TRIP_END_DEST + " TEXT, "
                 + TRIP_END_X + " DOUBLE, " + TRIP_END_Y + " DOUBLE, " + TRIP_DATE + " TEXT, " + TRIP_TIME + " TEXT, " + TRIP_NOTES +
-                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER," + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER)";
+                " TEXT, " + TRIP_STATUS + " TEXT, " + TRIP_IS_DONE + " INTEGER," + TRIP_IMAGE + " TEXT, " + TRIP_ALARM_ID + " INTEGER, " +
+                TRIP_MILLI_SECONDS + " INTEGER)";
+        //Note: in SQLite el integer haykaffy long (8 bytes in documentation)
 
         // Notes table create statement
         private static final String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NOTES
@@ -118,6 +120,7 @@ public class DBAdapter {
         values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
         values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
         values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
+        values.put(DatabaseHelper.TRIP_MILLI_SECONDS, trip.getMilliSeconds());
 
         // insert row
         long trip_id = db.insert(DatabaseHelper.TABLE_TRIPS, null, values);
@@ -125,13 +128,13 @@ public class DBAdapter {
         return trip_id;
     }
 
-    public ArrayList<Trip> getUserTrips(int userId){
+    public ArrayList<Trip> getUpcomingUserTrips(int userId) {
 
         ArrayList<Trip> trips = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS;
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS + " WHERE " + DatabaseHelper.USER_ID + " = ? AND " + DatabaseHelper.TRIP_STATUS + " = ?";
 
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(userId), "upcoming"});
 
         // looping through all rows and adding to list
         while (c.moveToNext()) {
@@ -151,6 +154,41 @@ public class DBAdapter {
             trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
             trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
             trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
+            trip.setMilliSeconds(c.getColumnIndex(DatabaseHelper.TRIP_MILLI_SECONDS));
+
+            trips.add(trip);
+        }
+
+        return trips;
+    }
+
+    public ArrayList<Trip> getUserTrips(int userId) {
+
+        ArrayList<Trip> trips = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS + " WHERE " + DatabaseHelper.USER_ID + " = ?";
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(userId)});
+
+        // looping through all rows and adding to list
+        while (c.moveToNext()) {
+            Trip trip = new Trip();
+            trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
+            trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
+            trip.setName(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_NAME)));
+            trip.setStart(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_DEST)));
+            trip.setStartX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_X)));
+            trip.setStartY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_Y)));
+            trip.setEnd(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_END_DEST)));
+            trip.setEndX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_X)));
+            trip.setEndY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_Y)));
+            trip.setDate(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_DATE)));
+            trip.setTime(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
+            trip.setStatus(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_STATUS)));
+            trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
+            trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
+            trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
+            trip.setMilliSeconds(c.getColumnIndex(DatabaseHelper.TRIP_MILLI_SECONDS));
 
             trips.add(trip);
         }
@@ -178,16 +216,17 @@ public class DBAdapter {
         values.put(DatabaseHelper.TRIP_IS_DONE, trip.getDone());
         values.put(DatabaseHelper.TRIP_IMAGE, trip.getImage());
         values.put(DatabaseHelper.TRIP_ALARM_ID, trip.getAlarmId());
+        values.put(DatabaseHelper.TRIP_MILLI_SECONDS, trip.getMilliSeconds());
 
         // updating row
         return db.update(DatabaseHelper.TABLE_TRIPS, values, DatabaseHelper.ID + " = ?",
                 new String[] { String.valueOf(trip.getId()) });
     }
 
-    public void deleteTrip(int trip_id) {
+    public void deleteTrip(String trip_id) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(DatabaseHelper.TABLE_TRIPS, DatabaseHelper.ID + " = ?",
-                new String[] { String.valueOf(trip_id) });
+                new String[] { trip_id });
     }
 
     /****************NOTES OPERATIONS**********************/
@@ -216,15 +255,14 @@ public class DBAdapter {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        c.moveToFirst();
-        do {
+        while (c.moveToNext()) {
             Note note = new Note();
             note.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             note.setTripId((c.getString(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
             note.setNote(c.getString(c.getColumnIndex(DatabaseHelper.NOTE)));
 
             notes.add(note);
-        } while( (c.moveToNext()));
+        }
 
         return notes;
     }

@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_menu_history"
             android:title="History" />
         <item
+            android:id="@+id/nav_map_history"
+            android:icon="@drawable/ic_menu_map_history"
+            android:title="Map history" />
+        <item
             android:id="@+id/nav_add_trip"
             android:icon="@drawable/ic_menu_add"
             android:title="Add trip" />

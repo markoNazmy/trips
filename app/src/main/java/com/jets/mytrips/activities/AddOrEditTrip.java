@@ -29,6 +29,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Note;
 import com.jets.mytrips.beans.Trip;
+import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.TripListData;
@@ -36,6 +37,7 @@ import com.jets.mytrips.services.TripListData;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Random;
 import java.util.UUID;
 
 public class AddOrEditTrip extends AppCompatActivity {
@@ -52,6 +54,7 @@ public class AddOrEditTrip extends AppCompatActivity {
     Button save;
     LinearLayout linearLayout;
     ArrayList<Note>notes;
+    ArrayList<Note>notesForUpdate;
     int year;
     int month;
     int day;
@@ -201,13 +204,18 @@ public class AddOrEditTrip extends AppCompatActivity {
                     Note note = new Note();
                     note.setId(UUID.randomUUID().toString().substring(10));
                     note.setNote(tripNote.getText().toString());
-                    note.setTripId(tripId);
+                    note.setTripId(trip.getId());
                     System.out.println(note.getNote());
                     tripNote.setText("");
                     TextView textView = new TextView(AddOrEditTrip.this);
                     textView.setText(note.getNote());
                     linearLayout.addView(textView);
-                    notes.add(note);
+                    if (tripPositionAtList==-1) {
+                        notes.add(note);
+                    }
+                    else{
+                        notesForUpdate.add(note);
+                    }
                 }
                 else{
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you did'nt entered a note to add !", Snackbar.LENGTH_LONG)
@@ -289,6 +297,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
 
                 if(flag_save){
+                    TripController tripController = TripController.getInstance(AddOrEditTrip.this);
                     SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
                     int user_id =sharedPreferences.getInt("id", -1);
                     if (user_id!=-1) {
@@ -296,32 +305,55 @@ public class AddOrEditTrip extends AppCompatActivity {
                     }
                     System.out.println("aaaaaaaaaaaaaaaaaaaaaaa"+user_id);
 
-                    long diff_in_ms;
-                    long currentDay= System.currentTimeMillis();
-                    GregorianCalendar nextDay=new  GregorianCalendar (year,month+1,day,hours,minutes,0);
+// for adding new trip
+                    if (tripPositionAtList==-1) {
+                        long diff_in_ms;
+                        long currentDay= System.currentTimeMillis();
+                        GregorianCalendar nextDay=new  GregorianCalendar (year,month+1,day,hours,minutes,0);
+                        diff_in_ms=nextDay. getTimeInMillis()-currentDay;
+                        //System.out.println("aaaaaaaaaaaaaaaaaaa start " +trip.getStart() );
+                        //  noooooooo dateeeee
+                        trip.setImage("aaa");
+                        trip.setStatus("upcoming");
+                        trip.setDate(day + "/" + (month + 1) + "/" + year);
+                        trip.setTime( hours + ":" + minutes);
+                        trip.setAlarmId( new Random().nextInt(1000 - 5) + 5);
+                        AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
+                        if(!notes.isEmpty()) {
 
-                    diff_in_ms=nextDay. getTimeInMillis()-currentDay;
-                    //System.out.println("aaaaaaaaaaaaaaaaaaa start " +trip.getStart() );
-                    //  noooooooo dateeeee
-                    trip.setImage("aaa");
-                    trip.setStatus("upcoming");
-                    trip.setDate(day + "/" + (month + 1) + "/" + year);
-                    trip.setTime( hours + ":" + minutes);
-                    trip.setAlarmId((int) System.currentTimeMillis());
-                    AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
-                    if(!notes.isEmpty()) {
+                            for (Note note : notes) {
 
-                        for (Note note : notes) {
-
-                            System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                                System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                            }
+                            trip.setNotes(notes);
                         }
-                        trip.setNotes(notes);
+                        new DBAdapter(AddOrEditTrip.this).addTrip(trip);
+                        // User trips is now asynchronous
+                        tripController.setUserTripsSynchronized(false);
+                        TripListData.getUpcomingTripsListInstance().add(trip);
+                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                     }
-                    new DBAdapter(AddOrEditTrip.this).addTrip(trip);
-                    TripListData.getTripsListInstance().add(trip);
-                    TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this,TripListData.getTripsListInstance()).notifyDataSetChanged();
-                    Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
-                    startActivity(intent);
+
+
+// for updating a trip
+                    else{
+                        if(!notesForUpdate.isEmpty()) {
+
+                            for (Note note : notesForUpdate) {
+
+                                System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                            }
+                            trip.setNotes(notesForUpdate);
+                        }
+                        new DBAdapter(AddOrEditTrip.this).updateTrip(trip);
+                        // User trips is now asynchronous
+                        tripController.setUserTripsSynchronized(false);
+                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
+                        TripListData.getUpcomingTripsListInstance().add(tripPositionAtList,trip);
+                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+
+                    }
+                    finish();
                 }
 
             }
@@ -339,7 +371,8 @@ public class AddOrEditTrip extends AppCompatActivity {
             trip.setId(tripId);
         }
         else{
-            trip = TripListData.getTripsListInstance().get(tripPositionAtList);
+            notesForUpdate=new ArrayList<>();
+            trip = TripListData.getUpcomingTripsListInstance().get(tripPositionAtList);
             tripFrom.setHint(trip.getStart());
             tripTo.setHint(trip.getEnd());
             tripName.setText(trip.getName());
