@@ -224,7 +224,7 @@ public class DBAdapter {
 
         // looping through all rows and adding to list
 
-        while( (c.moveToNext())){
+        while((c.moveToNext())){
             Note note = new Note();
             note.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
             note.setTripId((c.getString(c.getColumnIndex(DatabaseHelper.TRIP_ID))));
@@ -241,7 +241,6 @@ public class DBAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        //id is auto incremented
         values.put(DatabaseHelper.NOTE, note.getNote());
 
         // updating row
@@ -253,6 +252,20 @@ public class DBAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(DatabaseHelper.TABLE_NOTES, DatabaseHelper.ID + " = ?",
                 new String[] { String.valueOf(note_id) });
+    }
+
+    public boolean userHasTrips(){
+        boolean hasTrips = false;
+
+        String query = "SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_TRIPS;
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        Cursor c = db.rawQuery(query, null);
+
+        if(c.getCount() > 0)
+            hasTrips = true;
+
+        return hasTrips;
     }
 
     /****************CLOSE CONNECTION**********************/

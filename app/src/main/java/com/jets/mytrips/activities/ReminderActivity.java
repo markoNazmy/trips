@@ -1,5 +1,6 @@
 package com.jets.mytrips.activities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,6 +16,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -23,7 +26,7 @@ import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.ListenerClass;
 
-public class ReminderActivity extends AppCompatActivity {
+public class ReminderActivity extends Activity {
 
     Button btnCancel;
     Button btnStart;
@@ -43,18 +46,21 @@ public class ReminderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reminder);
 
         trip = getIntent().getParcelableExtra("trip");
         Log.i("----myTag", "Trip Name: " + trip.getName());
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//        DisplayMetrics dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//
+//        int width = dm.widthPixels;
+//        int height = dm.heightPixels;
+//
+//        getWindow().setLayout((int)(width*0.90), (int)(height*0.50));
 
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-
-        getWindow().setLayout((int)(width*0.90), (int)(height*0.50));
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setFinishOnTouchOutside(false);
+        setContentView(R.layout.activity_reminder);
 
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         alarmSound = RingtoneManager.getRingtone(getApplicationContext(), uri);
@@ -93,10 +99,11 @@ public class ReminderActivity extends AppCompatActivity {
         tripDest.setText(trip.getStart() + " - " + trip.getEnd());
         tripNotes.setText("Remember to: \n");
 
-        //TODO: see why it trip.getNotes() returns null
-        /*for (int i = 0; i < trip.getNotes().size(); i++){
-            tripNotes.setText(tripNotes.getText().toString() + trip.getNotes().get(i) + "\n");
-        }*/
+//        trip.setNotes(dba.getTripNotes(trip.getId()));
+//
+//        for (int i = 0; i < trip.getNotes().size(); i++){
+//            tripNotes.setText(tripNotes.getText().toString() + trip.getNotes().get(i) + "\n");
+//        }
 
         dba = new DBAdapter(ReminderActivity.this);
 
@@ -115,7 +122,6 @@ public class ReminderActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: handeleo el start point ezzay
                 Uri uri = Uri.parse("google.navigation:q=" + trip.getEnd() + "&mode=d");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.google.android.apps.maps");
