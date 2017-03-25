@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -24,9 +27,11 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
+import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.MyTripsListAdapter;
 import com.jets.mytrips.services.TripListData;
+import com.jets.mytrips.services.VolleyCallback;
 
 import java.util.ArrayList;
 
@@ -36,8 +41,8 @@ public class CurrentTripsActivity extends AppCompatActivity
     SwipeMenuListView trips_list;
     SwipeMenuCreator creator;
     MyTripsListAdapter myTripsListAdapter;
-    int listpostion;
-    ArrayList<Trip> trips = TripListData.getTripsListInstance();
+    int listPosition;
+    ArrayList<Trip> trips = TripListData.getUpcomingTripsListInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,17 +101,38 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         ////////////////////////////
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
-        trips.addAll(dbAdapter.getUserTrips(sharedPreferences.getInt("id", -1)));
+        /* Clear trips list in case of rotation */
+        trips.clear();
+        trips.addAll(dbAdapter.getUpcomingUserTrips(sharedPreferences.getInt("id", -1)));
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
+
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
-        myTripsListAdapter = new MyTripsListAdapter(getApplicationContext(),trips);
+        myTripsListAdapter = new MyTripsListAdapter(getApplicationContext(), trips);
         creator = new SwipeMenuCreator() {
 
             @Override
             public void create(SwipeMenu menu) {
-                // create "open" item
+                // create "Start" item
+                SwipeMenuItem startItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                startItem.setBackground(new ColorDrawable(Color.rgb(0xFE, 0xC5,
+                        0xB0)));
+                // set item width
+                startItem.setWidth((200));
+                // set item title
+                startItem.setTitle("Start");
+                // set item title font size
+                startItem.setTitleSize(18);
+                // set item title font color
+                startItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(startItem);
+
+                // create "Edit" item
                 SwipeMenuItem openItem = new SwipeMenuItem(
                         getApplicationContext());
                 // set item background
@@ -115,8 +141,8 @@ public class CurrentTripsActivity extends AppCompatActivity
                 // set item width
                 openItem.setWidth((200));
                 // set item title
-                openItem.setTitle("Open");
-                // set item title fontsize
+                openItem.setTitle("Edit");
+                // set item title font size
                 openItem.setTitleSize(18);
                 // set item title font color
                 openItem.setTitleColor(Color.WHITE);
@@ -124,7 +150,7 @@ public class CurrentTripsActivity extends AppCompatActivity
                 menu.addMenuItem(openItem);
 
 
-                // create "delete" item
+                // create "Delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                         getApplicationContext());
                 // set item background
@@ -133,42 +159,54 @@ public class CurrentTripsActivity extends AppCompatActivity
                 // set item width
                 deleteItem.setWidth((200));
                 // set item title
-                deleteItem.setTitle("delete");
-                // set item title fontsize
+                deleteItem.setTitle("Delete");
+                // set item title font size
                 deleteItem.setTitleSize(18);
                 // set item title font color
                 deleteItem.setTitleColor(Color.WHITE);
-
-                // set a icon
-                //     deleteItem.setIcon(R.drawable.age);
-
                 // add to menu
                 menu.addMenuItem(deleteItem);
             }
         };
         trips_list.setMenuCreator(creator);
 
-
+        trips_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(CurrentTripsActivity.this, TripDetails.class);
+                intent.putExtra("TripDetails", trips.get(position));
+                CurrentTripsActivity.this.startActivity(intent);
+            }
+        });
 
         trips_list.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                Intent intent;
                 switch (index) {
                     case 0:
-                        // open
-                        String out= String.valueOf(trips_list.getItemAtPosition(listpostion));
-                        Intent intent = new Intent(CurrentTripsActivity.this,AddOrEditTrip.class);
-                        intent.putExtra("tripPositionAtList",listpostion);
+                        // Start
+                        Uri uri = Uri.parse("google.navigation:q=" + trips.get(listPosition).getEnd() + "&mode=d");
+                        intent = new Intent(Intent.ACTION_VIEW, uri);
+                        intent.setPackage("com.google.android.apps.maps");
                         startActivity(intent);
-
-                        Toast.makeText(getApplicationContext(),out,Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
+                        // Edit
+                        intent = new Intent(CurrentTripsActivity.this, AddOrEditTrip.class);
+                        intent.putExtra("tripPositionAtList", listPosition);
+                        startActivity(intent);
+                        break;
+                    case 2:
                         // delete
-                        // data.removeView(data.getAdapter().getView(listpostion,null,data));
-                        trips.remove(listpostion);
+                        Trip deletedTrip = trips.get(listPosition);
+                        deletedTrip.setStatus("deleted");
+                        dbAdapter.updateTrip(deletedTrip);
+                        // User trips is now asynchronous
+                        TripController.getInstance(CurrentTripsActivity.this).setUserTripsSynchronized(false);
+                        // Remove trip from the list of upcoming trips
+                        trips.remove(listPosition);
                         myTripsListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(),"delete done",Toast.LENGTH_SHORT).show();
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -180,7 +218,7 @@ public class CurrentTripsActivity extends AppCompatActivity
             @Override
             public void onSwipeStart(int position) {
                 // swipe start
-                listpostion=position;
+                listPosition = position;
 
             }
 
@@ -200,16 +238,14 @@ public class CurrentTripsActivity extends AppCompatActivity
         super.onStart();
 
 
-    for (Trip trip : trips){
+        for (Trip trip : trips) {
 
-        System.out.println("gggggggggggggggggggggggggggggg"+trip.getName());
+            System.out.println("gggggggggggggggggggggggggggggg" + trip.getName());
+
+        }
+
 
     }
-
-
-
-    }
-
 
 
     @Override
@@ -237,7 +273,8 @@ public class CurrentTripsActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_synchronize) {
+            synchronizeUserTrips();
             return true;
         }
 
@@ -250,22 +287,61 @@ public class CurrentTripsActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_history) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_map_history) {
+            Intent intent = new Intent(getBaseContext(),MapTripsHistory.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_add_trip) {
+            startActivity(new Intent(getBaseContext(), AddOrEditTrip.class));
+        } else if (id == R.id.nav_synchronize) {
+            synchronizeUserTrips();
+        } else if (id == R.id.nav_logout) {
+            SharedPreferences.Editor editor = getSharedPreferences("MyTrips", MODE_PRIVATE).edit();
+            editor.clear();
+            editor.commit();
+            dbAdapter.logout();
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void synchronizeUserTrips() {
+        final TripController tripController = TripController.getInstance(this);
+
+        if (!tripController.isUserTripsSynchronized()) {
+            final ArrayList<Trip> trips = dbAdapter.getUserTrips(getSharedPreferences("MyTrips", MODE_PRIVATE).getInt("id", -1));
+            if (!trips.isEmpty()) {
+                for (Trip trip : trips) {
+                    trip.setNotes(dbAdapter.getTripNotes(trip.getId()));
+                }
+                tripController.synchronizeUserTrips(trips, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(Object response) {
+                        for (Trip trip : trips) {
+                            if (trip.getStatus().equals("deleted")) {
+                                dbAdapter.deleteTrip(trip.getId());
+                            }
+                        }
+                        tripController.setUserTripsSynchronized(true);
+                        Toast.makeText(CurrentTripsActivity.this, "Your data has been synchronized successfully", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(CurrentTripsActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            if (trips.isEmpty()) {
+                Toast.makeText(CurrentTripsActivity.this, "There is no data to synchronize", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(CurrentTripsActivity.this, "Your data is already synchronous", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

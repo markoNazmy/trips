@@ -3,14 +3,13 @@ package com.jets.mytrips.beans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rocke on 3/14/2017.
  */
 
-public class Trip implements Parcelable{
+public class Trip implements Parcelable {
 
     String id;
     int userId;
@@ -27,8 +26,8 @@ public class Trip implements Parcelable{
     int done;
     ArrayList<Note> notes;
     String image;
-    int alarmId;
     long milliSeconds;
+    int alarmId;
 
     public Trip(String id, int userId, String start, double startX, double startY, String end,
                 double endX, double endY, String date, String time, String status, int done,
@@ -51,7 +50,7 @@ public class Trip implements Parcelable{
         this.milliSeconds = milliSeconds;
     }
 
-    public Trip(){
+    public Trip() {
 
     }
 
@@ -206,14 +205,6 @@ public class Trip implements Parcelable{
         this.image = image;
     }
 
-    public int getAlarmId() {
-        return alarmId;
-    }
-
-    public void setAlarmId(int alarmId) {
-        this.alarmId = alarmId;
-    }
-
     public long getMilliSeconds() {
         return milliSeconds;
     }
@@ -245,5 +236,13 @@ public class Trip implements Parcelable{
         dest.writeString(image);
         dest.writeInt(alarmId);
         dest.writeLong(milliSeconds);
+    }
+
+    public int getAlarmId() {
+        return alarmId;
+    }
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
     }
 }

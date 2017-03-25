@@ -51,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
                 UserController.getInstance(RegisterActivity.this).registerUser(new User(email, password, fullName),
                         new VolleyCallback() {
                             @Override
-                            public void onSuccess(User user) {
+                            public void onSuccess(Object response) {
                                 RegisterActivity.this.finish();
                             }
 
