@@ -47,14 +47,10 @@
 
         <!--Reminder activity-->
         <activity android:name="activities.ReminderActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
 
-        <receiver android:name=".services.ListenerClass">
-            <!--<intent-filter>
-                <action android:name="tripBegins" />
-            </intent-filter>-->
-        </receiver>
+        <receiver android:name=".services.ListenerClass" />
     </application>
 
 </manifest>
