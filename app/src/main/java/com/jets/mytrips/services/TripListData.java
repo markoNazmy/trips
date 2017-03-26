@@ -14,6 +14,7 @@ public class TripListData {
     private static ArrayList<Trip> upcomingTripsList;
     private static ArrayList<Trip> historicalTripsList;
     private static MyTripsListAdapter myTripsListAdapter;
+    private static MyTripsListAdapter myHistoricalTripsListAdapter;
 
     private TripListData() {
     }
@@ -37,5 +38,12 @@ public class TripListData {
             myTripsListAdapter = new MyTripsListAdapter(context, resource);
         }
         return myTripsListAdapter;
+    }
+
+    public static synchronized MyTripsListAdapter getMyHistoricalTripsListAdapterInstance(Context context, ArrayList<Trip> resource) {
+        if (myHistoricalTripsListAdapter == null) {
+            myHistoricalTripsListAdapter = new MyTripsListAdapter(context, resource);
+        }
+        return myHistoricalTripsListAdapter;
     }
 }

@@ -42,19 +42,26 @@
         <activity android:name=".activities.RegisterActivity" />
         <activity
             android:name=".activities.MapTripsHistory"
-            android:label="@string/title_activity_map_trips_history"></activity>
-        <activity android:name=".activities.ReminderActivity"></activity>
+            android:label="@string/title_activity_map_trips_history" />
+        <activity android:name=".activities.ReminderActivity" />
 
-        <!--Reminder activity-->
-        <activity android:name="activities.ReminderActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
-        </activity>
+        <!-- Reminder activity -->
+        <activity
+            android:name="activities.ReminderActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"></activity>
 
         <receiver android:name=".services.ListenerClass">
-            <!--<intent-filter>
+
+            <!--
+            <intent-filter>
                 <action android:name="tripBegins" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </receiver>
+
+        <activity
+            android:name=".activities.HistoryActivity"
+            android:label="@string/title_activity_history"></activity>
     </application>
 
 </manifest>

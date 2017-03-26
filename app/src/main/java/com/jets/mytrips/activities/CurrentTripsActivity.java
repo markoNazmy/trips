@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -56,7 +55,7 @@ public class CurrentTripsActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getBaseContext(),AddOrEditTrip.class);
+                Intent intent = new Intent(getBaseContext(), AddOrEditTrip.class);
                 startActivity(intent);
             }
         });
@@ -110,7 +109,7 @@ public class CurrentTripsActivity extends AppCompatActivity
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
 //        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
-        myTripsListAdapter = new MyTripsListAdapter(getApplicationContext(), trips);
+        myTripsListAdapter = TripListData.getMyTripsListAdapterInstance(getApplicationContext(), trips);
         creator = new SwipeMenuCreator() {
 
             @Override
@@ -288,9 +287,9 @@ public class CurrentTripsActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_history) {
-
+            startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_map_history) {
-            Intent intent = new Intent(getBaseContext(),MapTripsHistory.class);
+            Intent intent = new Intent(getBaseContext(), MapTripsHistory.class);
             startActivity(intent);
         } else if (id == R.id.nav_add_trip) {
             startActivity(new Intent(getBaseContext(), AddOrEditTrip.class));

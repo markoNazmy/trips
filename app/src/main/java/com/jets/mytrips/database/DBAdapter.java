@@ -162,6 +162,40 @@ public class DBAdapter {
         return trips;
     }
 
+    public ArrayList<Trip> getHistoricalUserTrips(int userId) {
+
+        ArrayList<Trip> trips = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS + " WHERE " + DatabaseHelper.USER_ID + " = ? AND (" + DatabaseHelper.TRIP_STATUS + " = ? OR " + DatabaseHelper.TRIP_STATUS + " = ?)";
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(userId), "done", "cancelled"});
+
+        // looping through all rows and adding to list
+        while (c.moveToNext()) {
+            Trip trip = new Trip();
+            trip.setId(c.getString((c.getColumnIndex(DatabaseHelper.ID))));
+            trip.setUserId((c.getInt(c.getColumnIndex(DatabaseHelper.USER_ID))));
+            trip.setName(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_NAME)));
+            trip.setStart(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_START_DEST)));
+            trip.setStartX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_X)));
+            trip.setStartY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_START_Y)));
+            trip.setEnd(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_END_DEST)));
+            trip.setEndX(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_X)));
+            trip.setEndY(c.getDouble(c.getColumnIndex(DatabaseHelper.TRIP_END_Y)));
+            trip.setDate(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_DATE)));
+            trip.setTime(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_TIME)));
+            trip.setStatus(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_STATUS)));
+            trip.setDone(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_IS_DONE)));
+            trip.setImage(c.getString(c.getColumnIndex(DatabaseHelper.TRIP_IMAGE)));
+            trip.setAlarmId(c.getInt(c.getColumnIndex(DatabaseHelper.TRIP_ALARM_ID)));
+            trip.setMilliSeconds(c.getColumnIndex(DatabaseHelper.TRIP_MILLI_SECONDS));
+
+            trips.add(trip);
+        }
+
+        return trips;
+    }
+
     public ArrayList<Trip> getUserTrips(int userId) {
 
         ArrayList<Trip> trips = new ArrayList<>();

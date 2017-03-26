@@ -44,7 +44,7 @@ public class UserController {
     }
 
     public void registerUser(final User user, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/RegisterServlet";
+        String url = "http://10.118.50.121:8081/MyTripsBackend/RegisterServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     public void login(final String email, final String password, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/LoginServlet";
+        String url = "http://10.118.50.121:8081/MyTripsBackend/LoginServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
