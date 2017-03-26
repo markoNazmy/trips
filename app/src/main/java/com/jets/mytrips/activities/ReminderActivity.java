@@ -142,7 +142,7 @@ public class ReminderActivity extends AppCompatActivity {
                         .setContentTitle("Trips")
                         .setContentText("Your trip is pending, click to start..")
                         .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
+                      //  .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(true);
                 Notification n;

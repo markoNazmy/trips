@@ -4,22 +4,19 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
+
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -129,6 +126,14 @@ public class AddOrEditTrip extends AppCompatActivity {
             }
 
         });
+        tripFrom.getView().findViewById(R.id.place_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trip.setStart("");
+                trip.setStartX(0.0);
+                trip.setStartY(0.0);
+            }
+        });
         tripTo.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -147,7 +152,14 @@ public class AddOrEditTrip extends AppCompatActivity {
             }
 
         });
-
+        tripTo.getView().findViewById(R.id.place_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trip.setEnd("");
+                trip.setEndX(0.0);
+                trip.setEndY(0.0);
+            }
+        });
 
 
 
@@ -295,22 +307,26 @@ public class AddOrEditTrip extends AppCompatActivity {
                             .setAction("Action", null).show();
                 }
                 if(checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())){
-                    DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                    Date date= null;
-                    try {
-                        date = df.parse(tripDate.getText().toString()+" "+tripTime.getText().toString());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    if(checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
+                        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                        Date date = null;
+                        try {
+                            date = df.parse(tripDate.getText().toString() + " " + tripTime.getText().toString());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        GregorianCalendar nextDay = new GregorianCalendar();
+                        nextDay.setTime(date);
+                        diff_in_ms = nextDay.getTimeInMillis() - currentDay;
+                        System.out.println("diffffffffff " + diff_in_ms);
+
+                        trip.setDate(tripDate.getText().toString());
+                        trip.setTime(tripTime.getText().toString());
                     }
-                    GregorianCalendar nextDay=new  GregorianCalendar ();
-                    nextDay.setTime(date);
-                    diff_in_ms=nextDay. getTimeInMillis()-currentDay;
-                    System.out.println("diffffffffff "+diff_in_ms);
-//                    GregorianCalendar nextDayy=new  GregorianCalendar (year,month,day,hours,minutes,0);
-//                    diff_in_ms=nextDayy. getTimeInMillis()-currentDay;
-//                    System.out.println("diffffffffff "+diff_in_ms);
-                    trip.setDate(tripDate.getText().toString());
-                    trip.setTime( tripTime.getText().toString());
+                    else{
+                        Snackbar.make(getWindow().getDecorView().getRootView(), "you should not enter a past time", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
                 }
 
                 TripController tripController = TripController.getInstance(AddOrEditTrip.this);
@@ -321,13 +337,11 @@ public class AddOrEditTrip extends AppCompatActivity {
                 }
 
                 if (tripPositionAtList==-1) {
-                    if (checkText(tripName.getText().toString()) && checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())&& checkText(trip.getStart()) && checkText(trip.getEnd())) {
+                    if (checkText(tripName.getText().toString()) && checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())&& checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
                         trip.setImage("aaa");
                         trip.setStatus("upcoming");
                         trip.setAlarmId( new Random().nextInt(100000 - 5) + 5);
-
                         trip.setMilliSeconds(diff_in_ms);
-
                         AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
                         if(!notes.isEmpty()) {
 
@@ -364,7 +378,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                             roundTrip.setAlarmId( new Random().nextInt(100000 - 5) + 5);
                             AlarmManager.setTask(roundTrip,AddOrEditTrip.this,(diff_in_ms+3600000));
                             new DBAdapter(AddOrEditTrip.this).addTrip(roundTrip);
-                            TripListData.getTripsListInstance().add(roundTrip);
+                            TripListData.getUpcomingTripsListInstance().add(roundTrip);
                         }
                         new DBAdapter(AddOrEditTrip.this).addTrip(trip);
                         // User trips is now asynchronous
@@ -377,14 +391,24 @@ public class AddOrEditTrip extends AppCompatActivity {
                 }
 
                 else{
-                    if (checkText(tripName.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd())) {
+                    if (checkText(tripName.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
+                        // User trips is now asynchronous
+                        tripController.setUserTripsSynchronized(false);
+                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
                         if(doneCheckBox.isChecked()){
                             trip.setDone(1);
                             trip.setStatus("done");
+                            AlarmManager.deleteTask(trip.getAlarmId(),getApplicationContext());
+                            TripListData.getHistoricalTripsListInstance().add(trip);
+                            TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         }
                         else {
                             trip.setDone(0);
                             trip.setStatus("upcoming");
+                            trip.setMilliSeconds(diff_in_ms);
+                            AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
+                            TripListData.getUpcomingTripsListInstance().add(tripPositionAtList,trip);
+                            TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         }
                         if (!notesForUpdate.isEmpty()) {
 
@@ -394,14 +418,12 @@ public class AddOrEditTrip extends AppCompatActivity {
                             }
                             trip.setNotes(notesForUpdate);
                         }
-                        trip.setMilliSeconds(diff_in_ms);
-                        AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
+
                         new DBAdapter(AddOrEditTrip.this).updateTrip(trip);
-                        // User trips is now asynchronous
-                        tripController.setUserTripsSynchronized(false);
-                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
-                        TripListData.getUpcomingTripsListInstance().add(tripPositionAtList,trip);
-                        TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+
+
+
+
                         Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
                         startActivity(intent);
                     }
@@ -466,7 +488,27 @@ public class AddOrEditTrip extends AppCompatActivity {
 
 
 
+    static boolean checkTimeUpcoming(String date , String time){
 
+        long diff;
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date dateTovalidate= null;
+        try {
+            dateTovalidate = df.parse(date+" "+time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        GregorianCalendar nextDay=new  GregorianCalendar ();
+        nextDay.setTime(dateTovalidate);
+        diff=nextDay. getTimeInMillis()-System.currentTimeMillis();;
+        System.out.println("diffffffffff "+diff);
+        if(diff>0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 
 
@@ -491,3 +533,6 @@ public class AddOrEditTrip extends AppCompatActivity {
 //
 //                diff_in_ms=nextDay. getTimeInMillis()-currentDay;
 //                System.out.println("nowwwwwwwwwwwwwwwwwwww"+diff_in_ms);
+//                    GregorianCalendar nextDayy=new  GregorianCalendar (year,month,day,hours,minutes,0);
+//                    diff_in_ms=nextDayy. getTimeInMillis()-currentDay;
+//                    System.out.println("diffffffffff "+diff_in_ms);
