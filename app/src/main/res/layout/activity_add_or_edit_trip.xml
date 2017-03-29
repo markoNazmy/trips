@@ -28,35 +28,39 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/trip_name"
-            android:hint="trip name ....." />
+            android:hint="Trip Name" />
 
         <TextView
-            android:text="pick trip start point"
+            android:text="Start Point"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/textView4" />
+            android:id="@+id/textView4"
+            android:textColor="#5D4C46" />
 
         <fragment
             android:id="@+id/from_auto_complete"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginBottom="5dp" />
 
         <TextView
-            android:text="pick trip end point"
+            android:text="End Point"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/textView3" />
+            android:id="@+id/textView3"
+            android:textColorLink="#5D4C46" />
 
         <fragment
         android:id="@+id/to_auto_complete"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginBottom="5dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -65,11 +69,13 @@
             android:layout_weight="2"
             android:id="@+id/round_layout">
             <TextView
-                android:text="check it as a round trip"
+                android:text="Round Trip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/roundText"
-                android:layout_weight="3" />
+                android:layout_weight="2.16"
+                android:gravity="center"
+                android:textColorLink="#5D4C46" />
             <CheckBox
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -88,7 +94,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/pick_date"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/colorAccent" />
 
         <TextView
             android:layout_width="match_parent"
@@ -101,7 +108,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/pick_time"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/colorAccent" />
 
         <TextView
             android:layout_width="match_parent"
@@ -116,14 +124,15 @@
             android:ems="10"
             android:id="@+id/note_text"
             android:layout_weight="1"
-            android:hint="add note ....." />
+            android:hint="Add A Note" />
 
         <Button
             android:text="add note"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/add_note"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/colorAccent" />
 
 
         <!--<ListView-->
@@ -152,11 +161,13 @@
 
 
             <TextView
-                android:text="check it as a done trip"
+                android:text="Check as a done"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/doneText"
-                android:layout_weight="3" />
+                android:layout_weight="2.78"
+                android:textColorLink="#5D4C46"
+                android:gravity="center" />
             <CheckBox
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -169,7 +180,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/save"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/colorAccent" />
 
     </LinearLayout>
     </ScrollView>

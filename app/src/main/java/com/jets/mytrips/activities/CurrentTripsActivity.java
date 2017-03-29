@@ -2,12 +2,15 @@ package com.jets.mytrips.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +28,12 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadataResult;
+import com.google.android.gms.location.places.Places;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.controllers.TripController;
@@ -232,21 +241,6 @@ public class CurrentTripsActivity extends AppCompatActivity
 
 
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        for (Trip trip : trips) {
-
-            System.out.println("gggggggggggggggggggggggggggggg" + trip.getName());
-
-        }
-
-
-    }
-
 
     @Override
     public void onBackPressed() {

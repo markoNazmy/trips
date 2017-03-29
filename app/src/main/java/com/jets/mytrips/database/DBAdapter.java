@@ -249,7 +249,7 @@ public class DBAdapter {
     public ArrayList<Note> getTripNotes(String tripId){
 
         ArrayList<Note> notes = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_NOTES+" WHERE tripId = '"+tripId+"'";
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_NOTES + " WHERE tripId = '"+tripId+"'";
 
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
@@ -280,7 +280,7 @@ public class DBAdapter {
                 new String[] { String.valueOf(note.getId()) });
     }
 
-    public void deleteNote(int note_id) {
+    public void deleteNote(String note_id) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(DatabaseHelper.TABLE_NOTES, DatabaseHelper.ID + " = ?",
                 new String[] { String.valueOf(note_id) });
