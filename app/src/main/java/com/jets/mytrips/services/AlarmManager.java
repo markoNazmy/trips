@@ -30,7 +30,7 @@ public class AlarmManager {
         Log.i("myTag", "---------Time in Millies: " + timeInMilies);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, trip.getAlarmId(),
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                intent, PendingIntent.FLAG_CANCEL_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -39,7 +39,7 @@ public class AlarmManager {
     }
 
     public static void deleteTask(int alarmId ,Context mContext){
-        Intent intent = new Intent(mContext, CurrentTripsActivity.class);
+        Intent intent = new Intent(mContext, ListenerClass.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,alarmId,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) mContext.getSystemService(ALARM_SERVICE);
         am.cancel(pendingIntent);

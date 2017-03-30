@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -24,10 +25,15 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.database.DBAdapter;
+import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.MyTripsListAdapter;
 import com.jets.mytrips.services.TripListData;
 import com.jets.mytrips.services.VolleyCallback;
@@ -42,6 +48,7 @@ public class CurrentTripsActivity extends AppCompatActivity
     MyTripsListAdapter myTripsListAdapter;
     int listPosition;
     ArrayList<Trip> trips = TripListData.getUpcomingTripsListInstance();
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,37 +75,24 @@ public class CurrentTripsActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //        JSONParser jsonParser = JSONParser.getInstance();
-//
-//        String url = "http://192.168.1.2:8080/MyTripsBackend/SynchronizeServlet";
-//
-//        StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         trips_list = (SwipeMenuListView) findViewById(R.id.trips_list);
         dbAdapter = new DBAdapter(getBaseContext());
-//        Trip trip = new Trip();
-//        trip.setId(1);
-//        trip.setUserId(1);
-//        trip.setStart("start");
-//        trip.setStartCoord("startCoord");
-//        trip.setStart("end");
-//        trip.setStartCoord("endCoord");
-//        trip.setDate("date");
-//        trip.setTime("time");
-//        trip.setStatus("upcoming");
-//        dbAdapter.addTrip(trip);
 
-
-        ////////////////////////////
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
         /* Clear trips list in case of rotation */
         trips.clear();
@@ -199,6 +193,9 @@ public class CurrentTripsActivity extends AppCompatActivity
                     case 2:
                         // delete
                         Trip deletedTrip = trips.get(listPosition);
+                        // Remove its alarm
+                        AlarmManager.deleteTask(deletedTrip.getAlarmId(), getApplicationContext());
+                        // Set its status to deleted
                         deletedTrip.setStatus("deleted");
                         dbAdapter.updateTrip(deletedTrip);
                         // User trips is now asynchronous
@@ -231,21 +228,6 @@ public class CurrentTripsActivity extends AppCompatActivity
 
 
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        for (Trip trip : trips) {
-
-            System.out.println("gggggggggggggggggggggggggggggg" + trip.getName());
-
-        }
-
-
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -296,10 +278,22 @@ public class CurrentTripsActivity extends AppCompatActivity
         } else if (id == R.id.nav_synchronize) {
             synchronizeUserTrips();
         } else if (id == R.id.nav_logout) {
+            for (Trip trip : trips) {
+                AlarmManager.deleteTask(trip.getAlarmId(), getApplicationContext());
+            }
+
+            // Sign out if user signed in using his Gmail account
+            if (getSharedPreferences("MyTrips", MODE_PRIVATE).getBoolean("gmail_account", false) && mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                mGoogleApiClient.disconnect();
+            }
+
             SharedPreferences.Editor editor = getSharedPreferences("MyTrips", MODE_PRIVATE).edit();
             editor.clear();
             editor.commit();
             dbAdapter.logout();
+
+            finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
 

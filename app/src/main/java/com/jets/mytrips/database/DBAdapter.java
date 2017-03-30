@@ -165,10 +165,10 @@ public class DBAdapter {
     public ArrayList<Trip> getHistoricalUserTrips(int userId) {
 
         ArrayList<Trip> trips = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS + " WHERE " + DatabaseHelper.USER_ID + " = ? AND (" + DatabaseHelper.TRIP_STATUS + " = ? OR " + DatabaseHelper.TRIP_STATUS + " = ?)";
+        String selectQuery = "SELECT  * FROM " + DatabaseHelper.TABLE_TRIPS + " WHERE " + DatabaseHelper.USER_ID + " = ? AND (" + DatabaseHelper.TRIP_IS_DONE + " = ? OR " + DatabaseHelper.TRIP_STATUS + " = ?) AND " + DatabaseHelper.TRIP_STATUS + " <> ?";
 
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(userId), "done", "cancelled"});
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(userId), String.valueOf(1), "cancelled", "deleted"});
 
         // looping through all rows and adding to list
         while (c.moveToNext()) {

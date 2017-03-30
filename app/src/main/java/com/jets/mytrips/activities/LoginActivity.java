@@ -5,8 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -23,9 +25,8 @@ import com.jets.mytrips.beans.User;
 import com.jets.mytrips.controllers.TripController;
 import com.jets.mytrips.controllers.UserController;
 import com.jets.mytrips.database.DBAdapter;
+import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.Switcher;
-import com.jets.mytrips.services.TripListData;
-import com.jets.mytrips.services.Validator;
 import com.jets.mytrips.services.VolleyCallback;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private final int RC_SIGN_IN = 6;
     private UserController userController;
     private TripController tripController;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +46,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         userController = UserController.getInstance(this);
         tripController = TripController.getInstance(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
                 .build();
 
         // Customize google sign-in button
@@ -62,6 +65,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mGoogleApiClient.clearDefaultAccountAndReconnect();
+                // Disable the user interaction
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -84,7 +92,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     return;
                 }*/
 
-                userController.login(email, password, new VolleyCallback() {
+                // Show progress bar
+                progressBar.setVisibility(View.VISIBLE);
+                // Disable the user interaction
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                userController.login(email, password, false, new VolleyCallback() {
                     @Override
                     public void onSuccess(Object response) {
                         // Get user trips from backend and insert them in SQLite database
@@ -93,6 +107,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                     @Override
                     public void onFailure(String errorMessage) {
+                        // Hide progress bar
+                        progressBar.setVisibility(View.GONE);
+                        // Get user interaction back
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        // Show the error message
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -109,18 +128,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+            if (resultCode == RESULT_OK) {
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                handleSignInResult(result);
+            }
+            if (resultCode == RESULT_CANCELED) {
+                // Get user interaction back
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
         }
     }
 
@@ -130,8 +150,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount userAccount = result.getSignInAccount();
             final User user = new User(userAccount.getId(), userAccount.getId(), userAccount.getGivenName() + " " + userAccount.getFamilyName());
 
-            // Send user data to the backend server
-            userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
+            /* Send user data to the backend server */
+
+            // Show progress bar
+            progressBar.setVisibility(View.VISIBLE);
+
+            userController.login(user.getEmail(), user.getPassword(), true, new VolleyCallback() {
                 @Override
                 public void onSuccess(Object response) {
                     // Get user trips from backend and insert them in SQLite database
@@ -140,12 +164,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                 @Override
                 public void onFailure(String errorMessage) {
+                    if (errorMessage != null && !errorMessage.equals("Invalid email or password")) {
+                        // Hide progress bar
+                        progressBar.setVisibility(View.GONE);
+                        // Get user interaction back
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        // Show the error message
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     UserController.getInstance(LoginActivity.this).registerUser(user,
                             new VolleyCallback() {
                                 @Override
                                 public void onSuccess(Object response) {
 
-                                    userController.login(user.getEmail(), user.getPassword(), new VolleyCallback() {
+                                    userController.login(user.getEmail(), user.getPassword(), true, new VolleyCallback() {
                                         @Override
                                         public void onSuccess(Object response) {
                                             // Get user trips from backend and insert them in SQLite database
@@ -154,6 +187,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                                         @Override
                                         public void onFailure(String errorMessage) {
+                                            // Hide progress bar
+                                            progressBar.setVisibility(View.GONE);
+                                            // Get user interaction back
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            // Show the error message
                                             Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                                         }
                                     });
@@ -161,6 +199,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                                 @Override
                                 public void onFailure(String errorMessage) {
+                                    // Hide progress bar
+                                    progressBar.setVisibility(View.GONE);
+                                    // Get user interaction back
+                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                    // Show the error message
                                     Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -184,6 +227,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onSuccess(Object response) {
                 DBAdapter dbAdapter = new DBAdapter(getBaseContext());
                 for (Trip trip : (ArrayList<Trip>) response) {
+                    if (trip.getMilliSeconds() < System.currentTimeMillis()) {
+                        trip.setStatus("done");
+                        trip.setDone(1);
+                    } else {
+                        AlarmManager.setTask(trip, getApplicationContext(), trip.getAlarmId());
+                    }
                     dbAdapter.addTrip(trip);
                     ArrayList<Note> tripNotes = trip.getNotes();
                     if (!tripNotes.isEmpty()) {
@@ -193,6 +242,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                 }
                 tripController.setUserTripsSynchronized(true);
+                // Hide progress bar
+                progressBar.setVisibility(View.GONE);
+
                 // Switch to CurrentTripsActivity activity
                 switchToCurrentTripsActivity(user.getFullName());
             }
@@ -200,9 +252,25 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onFailure(String errorMessage) {
                 tripController.setUserTripsSynchronized(true);
+
+                if (!errorMessage.equals("")) {
+                    // Hide progress bar
+                    progressBar.setVisibility(View.GONE);
+                    // Get user interaction back
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    // Show the error message
+                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // Switch to CurrentTripsActivity activity
                 switchToCurrentTripsActivity(user.getFullName());
             }
         });
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT).show();
     }
 }

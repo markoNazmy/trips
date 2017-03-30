@@ -47,4 +47,12 @@
         android:background="#4285F4"
         android:text="Create an account"
         android:textColor="#FFFFFF" />
+
+    <ProgressBar
+        style="@android:style/Widget.Holo.ProgressBar.Large"
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 </LinearLayout>

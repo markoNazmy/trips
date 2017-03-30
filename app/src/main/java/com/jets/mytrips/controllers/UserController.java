@@ -44,7 +44,7 @@ public class UserController {
     }
 
     public void registerUser(final User user, final VolleyCallback callback) {
-        String url = "http://10.118.50.121:8081/MyTripsBackend/RegisterServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/RegisterServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -77,8 +77,8 @@ public class UserController {
         volleySingleton.addToRequestQueue(stringRequest);
     }
 
-    public void login(final String email, final String password, final VolleyCallback callback) {
-        String url = "http://10.118.50.121:8081/MyTripsBackend/LoginServlet";
+    public void login(final String email, final String password, final boolean gmailAccount, final VolleyCallback callback) {
+        String url = "http://192.168.1.4:8081/MyTripsBackend/LoginServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -87,7 +87,7 @@ public class UserController {
                     User user = jsonParser.getUserFromJsonSting(response);
 
                     // Save user data in preferences file
-                    saveUserSession(user);
+                    saveUserSession(user, gmailAccount);
 
                     callback.onSuccess(user);
                 } else {
@@ -111,11 +111,12 @@ public class UserController {
         volleySingleton.addToRequestQueue(stringRequest);
     }
 
-    public void saveUserSession(User user) {
+    public void saveUserSession(User user, boolean gmailAccount) {
         SharedPreferences.Editor editor = context.getSharedPreferences("MyTrips", context.MODE_PRIVATE).edit();
         editor.putInt("id", user.getId());
         editor.putString("email", user.getEmail());
         editor.putString("fullName", user.getFullName());
+        editor.putBoolean("gmail_account", gmailAccount);
         editor.commit();
     }
 }

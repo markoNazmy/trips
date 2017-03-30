@@ -12,10 +12,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.jets.mytrips.activities.CurrentTripsActivity"
     tools:showIn="@layout/app_bar_curr_trips">
+
     <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/trips_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:id="@+id/trips_list" />
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

@@ -51,7 +51,7 @@ public class TripController {
     }
 
     public void synchronizeUserTrips(final ArrayList<Trip> trips, final VolleyCallback callback) {
-        String url = "http://10.118.50.121:8081/MyTripsBackend/SynchronizeServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/SynchronizeServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -85,7 +85,7 @@ public class TripController {
     }
 
     public void getUserTrips(final int userId, final VolleyCallback callback) {
-        String url = "http://10.118.50.121:8081/MyTripsBackend/GetTripsServlet";
+        String url = "http://192.168.1.4:8081/MyTripsBackend/GetTripsServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
