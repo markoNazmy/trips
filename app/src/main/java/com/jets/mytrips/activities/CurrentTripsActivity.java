@@ -179,7 +179,20 @@ public class CurrentTripsActivity extends AppCompatActivity
                 switch (index) {
                     case 0:
                         // Start
+                        Trip doneTrip = trips.get(listPosition);
+                        // Remove its alarm
+                        AlarmManager.deleteTask(doneTrip.getAlarmId(), getApplicationContext());
+                        // Set its status to done
+                        doneTrip.setStatus("done");
+                        doneTrip.setDone(1);
+                        dbAdapter.updateTrip(doneTrip);
+                        // User trips is now asynchronous
+                        TripController.getInstance(CurrentTripsActivity.this).setUserTripsSynchronized(false);
                         Uri uri = Uri.parse("google.navigation:q=" + trips.get(listPosition).getEnd() + "&mode=d");
+                        // Remove trip from the list of upcoming trips
+                        trips.remove(listPosition);
+                        myTripsListAdapter.notifyDataSetChanged();
+                        // Switch to google maps
                         intent = new Intent(Intent.ACTION_VIEW, uri);
                         intent.setPackage("com.google.android.apps.maps");
                         startActivity(intent);
