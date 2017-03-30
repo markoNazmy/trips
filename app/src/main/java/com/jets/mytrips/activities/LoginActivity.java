@@ -29,7 +29,12 @@ import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.Switcher;
 import com.jets.mytrips.services.VolleyCallback;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, Switcher {
 
@@ -227,11 +232,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onSuccess(Object response) {
                 DBAdapter dbAdapter = new DBAdapter(getBaseContext());
                 for (Trip trip : (ArrayList<Trip>) response) {
-                    if (trip.getMilliSeconds() < System.currentTimeMillis()) {
+                    if (AddOrEditTrip.checkTimeUpcoming(trip.getDate(), trip.getTime())) {
                         trip.setStatus("done");
                         trip.setDone(1);
                     } else {
-                        AlarmManager.setTask(trip, getApplicationContext(), trip.getMilliSeconds());
+                        AlarmManager.setTask(trip, getApplicationContext(), calcTimeUpcoming(trip.getDate(), trip.getTime()));
                     }
                     dbAdapter.addTrip(trip);
                     ArrayList<Note> tripNotes = trip.getNotes();
@@ -272,5 +277,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(getApplicationContext(), "Something wrong happened, cannot connect to google services", Toast.LENGTH_SHORT).show();
+    }
+
+    private long calcTimeUpcoming(String date, String time) {
+
+        long difference;
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date dateToValidate = null;
+        try {
+            dateToValidate = df.parse(date + " " + time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        GregorianCalendar nextDay = new GregorianCalendar();
+        nextDay.setTime(dateToValidate);
+        difference = nextDay.getTimeInMillis() - System.currentTimeMillis();
+        return difference;
     }
 }
