@@ -116,7 +116,6 @@ public class AddOrEditTrip extends AppCompatActivity {
                 trip.setStart(place.getName().toString());
                 trip.setStartX(place.getLatLng().latitude);
                 trip.setStartY(place.getLatLng().longitude);
-
             }
 
             @Override
@@ -144,6 +143,9 @@ public class AddOrEditTrip extends AppCompatActivity {
                 trip.setEnd(place.getName().toString());
                 trip.setEndX(place.getLatLng().latitude);
                 trip.setEndY(place.getLatLng().longitude);
+
+                //image
+                trip.setImage(place.getId());
             }
 
             @Override
@@ -340,7 +342,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
                 if (tripPositionAtList==-1) {
                     if (checkText(tripName.getText().toString()) && checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())&& checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
-                        trip.setImage("aaa");
+                        //trip.setImage("aaa");
                         trip.setStatus("upcoming");
                         trip.setAlarmId( new Random().nextInt(100000 - 5) + 5);
                         trip.setMilliSeconds(diff_in_ms);

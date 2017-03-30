@@ -48,6 +48,11 @@
             android:label="@string/title_activity_map_trips_history"></activity>
         <activity android:name=".activities.ReminderActivity"></activity>
 
+        <!--Reminder activity-->
+        <activity android:name="activities.ReminderActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" >
+        </activity>
+
         <receiver android:name=".services.ListenerClass" />
     </application>
 

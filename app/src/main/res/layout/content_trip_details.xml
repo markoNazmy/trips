@@ -8,10 +8,54 @@
     tools:context="com.jets.mytrips.activities.TripDetails"
     tools:showIn="@layout/activity_trip_details">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tripNameDet"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:textStyle="normal|bold"
+            android:textColorLink="#5D4C46"
+            android:textSize="35dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
+            android:id="@+id/tripImgDet"
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tripDestDet"
+            android:gravity="center"
+            android:textColorLink="#5D4C46"
+            android:textSize="25dp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tripNotesDet"
+            android:gravity="center"
+            android:textColorLink="#5D4C46"
+            android:textSize="25dp" />
+
+        <CheckBox
+            android:text="Check as done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/doneCheckDet"
+            android:textColor="#5D4C46"
+            android:textColorLink="#5D4C46" />
+
+    </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

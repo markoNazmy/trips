@@ -12,7 +12,9 @@ import com.jets.mytrips.R;
 
 public class ViewHolder {
     View view;
-
+    TextView trip_name;
+    ImageView placeImageView;
+    TextView date;
 
     public TextView getTripName() {
         if (trip_name == null) {
@@ -34,10 +36,6 @@ public class ViewHolder {
         }
         return date;
     }
-
-    TextView trip_name;
-    ImageView placeImageView;
-    TextView date;
 
 
     public ViewHolder(View view) {

@@ -11,13 +11,36 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jets.mytrips.activities.SplashScreenActivity">
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <TextView
+        android:text="HELLO, USER"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="188dp"
+        android:id="@+id/helloSplash"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="36dp"
+        android:gravity="center_vertical"
+        android:layout_above="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="57dp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="200dp"
         app:srcCompat="@mipmap/ic_launcher"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp" />
+
+    <TextView
+        android:text="My Trip Organizer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center_vertical"
+        android:layout_marginTop="31dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="140dp" />
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/place_autocomplete_powered_by_google_height"
+        android:textStyle="normal|bold" />
 </RelativeLayout>

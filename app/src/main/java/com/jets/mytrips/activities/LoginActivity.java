@@ -231,7 +231,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         trip.setStatus("done");
                         trip.setDone(1);
                     } else {
-                        AlarmManager.setTask(trip, getApplicationContext(), trip.getAlarmId());
+                        AlarmManager.setTask(trip, getApplicationContext(), trip.getMilliSeconds());
                     }
                     dbAdapter.addTrip(trip);
                     ArrayList<Note> tripNotes = trip.getNotes();
