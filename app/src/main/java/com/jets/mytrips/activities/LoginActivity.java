@@ -27,6 +27,7 @@ import com.jets.mytrips.controllers.UserController;
 import com.jets.mytrips.database.DBAdapter;
 import com.jets.mytrips.services.AlarmManager;
 import com.jets.mytrips.services.Switcher;
+import com.jets.mytrips.services.Validator;
 import com.jets.mytrips.services.VolleyCallback;
 
 import java.text.DateFormat;
@@ -86,16 +87,26 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View v) {
                 String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
                 String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
-                /*Validator validator = Validator.getInstance();
 
-                if (!validator.isValidInput(email) && !validator.isValidInput(password)) {
+                Validator validator = Validator.getInstance();
+                boolean validationFlag = true;
+
+                if (!validator.isValidInput(email)) {
+                    validationFlag = false;
+                }
+                if (!validator.isValidInput(password)) {
+                    validationFlag = false;
+                }
+
+                if (!validationFlag) {
                     Toast.makeText(LoginActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 if (!validator.isValidEmail(email)) {
                     Toast.makeText(LoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
 
                 // Show progress bar
                 progressBar.setVisibility(View.VISIBLE);

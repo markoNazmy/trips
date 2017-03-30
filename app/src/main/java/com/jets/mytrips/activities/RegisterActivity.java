@@ -1,6 +1,5 @@
 package com.jets.mytrips.activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,16 +27,32 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
                 String fullName = ((EditText) findViewById(R.id.fullNameEditText)).getText().toString();
                 String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
-                /*String confirmPassword = ((EditText) findViewById(R.id.confirmPasswordEditText)).getText().toString();
-                Validator validator = Validator.getInstance();
+                String confirmPassword = ((EditText) findViewById(R.id.confirmPasswordEditText)).getText().toString();
 
-                if (!validator.isValidInput(email) &&
-                        !validator.isValidInput(fullName) &&
-                        !validator.isValidInput(password) &&
-                        !validator.isValidInput(confirmPassword)) {
+                Validator validator = Validator.getInstance();
+                boolean validationFlag = true;
+
+                if (!validator.isValidInput(email)) {
+                    validationFlag = false;
+                }
+
+                if (!validator.isValidInput(fullName)) {
+                    validationFlag = false;
+                }
+
+                if (!validator.isValidInput(password)) {
+                    validationFlag = false;
+                }
+
+                if (!validator.isValidInput(confirmPassword)) {
+                    validationFlag = false;
+                }
+
+                if (!validationFlag) {
                     Toast.makeText(RegisterActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 if (!validator.isValidEmail(email)) {
                     Toast.makeText(RegisterActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
                     return;
@@ -45,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (!password.equals(confirmPassword)) {
                     Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
 
                 // Send user data to the backend server
                 UserController.getInstance(RegisterActivity.this).registerUser(new User(email, password, fullName),

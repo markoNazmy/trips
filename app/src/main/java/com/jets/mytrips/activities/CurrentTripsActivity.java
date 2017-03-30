@@ -99,10 +99,6 @@ public class CurrentTripsActivity extends AppCompatActivity
         trips.addAll(dbAdapter.getUpcomingUserTrips(sharedPreferences.getInt("id", -1)));
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
 
-//        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getStart());
-//        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(0).getEnd());
-//        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getStart());
-//        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrr"+trips.get(1).getEnd());
         myTripsListAdapter = TripListData.getMyTripsListAdapterInstance(getApplicationContext(), trips);
         creator = new SwipeMenuCreator() {
 
