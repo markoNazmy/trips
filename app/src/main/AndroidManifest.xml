@@ -27,35 +27,45 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA40U80aJecaH-sS08dlG4smR_Tlbjb2TA" />
 
-        <activity android:name=".activities.SplashScreenActivity">
+        <activity android:name=".activities.SplashScreenActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.CurrentTripsActivity"
             android:label="@string/title_activity_curr_trips"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.AddOrEditTrip" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.AddOrEditTrip"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.TripDetails"
             android:label="@string/title_activity_trip_details"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.RegisterActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.RegisterActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".activities.HistoryActivity" />
+        <activity android:name=".activities.HistoryActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.MapTripsHistory"
-            android:label="@string/title_activity_map_trips_history"></activity>
-        <activity android:name=".activities.ReminderActivity"></activity>
+            android:label="@string/title_activity_map_trips_history"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".activities.ReminderActivity"
+            android:screenOrientation="portrait"></activity>
 
         <!--Reminder activity-->
         <!--android:theme="@style/Theme.AppCompat.Light.Dialog"-->
-        <activity android:name="activities.ReminderActivity" >
+        <activity android:name="activities.ReminderActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <receiver android:name=".services.ListenerClass" />
