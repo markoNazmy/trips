@@ -102,7 +102,7 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 0) {
-                    imgBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.common_google_signin_btn_icon_dark);
+                    imgBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.map);
                     tripImg.setImageBitmap(imgBitmap);
                 }
                 else {

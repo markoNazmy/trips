@@ -132,7 +132,7 @@
             android:ems="10"
             android:id="@+id/note_text"
             android:layout_weight="1"
-            android:hint="Add A Note" />
+            android:hint="Add a note" />
 
         <Button
             android:text="add note"
