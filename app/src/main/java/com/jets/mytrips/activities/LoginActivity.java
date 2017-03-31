@@ -243,7 +243,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onSuccess(Object response) {
                 DBAdapter dbAdapter = new DBAdapter(getBaseContext());
                 for (Trip trip : (ArrayList<Trip>) response) {
-                    if (AddOrEditTrip.checkTimeUpcoming(trip.getDate(), trip.getTime())) {
+                    if (!AddOrEditTrip.checkTimeUpcoming(trip.getDate(), trip.getTime())) {
                         trip.setStatus("done");
                         trip.setDone(1);
                     } else {
