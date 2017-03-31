@@ -4,7 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
-    tools:context="com.jets.mytrips.activities.ReminderActivity">
+    tools:context="com.jets.mytrips.activities.ReminderActivity"
+    android:gravity="center_vertical|center_horizontal|center"
+    android:background="@color/colorPrimary"
+    android:id="@+id/popLayout">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,7 +21,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/tripName"
             android:gravity="center_horizontal"
-            android:paddingTop="5dp" />
+            android:paddingTop="5dp"
+            android:textColorLink="#5D4C46"
+            android:textSize="35dp" />
 
         <TextView
             android:text="TRIP ROUTE"
@@ -26,44 +31,49 @@
             android:layout_height="wrap_content"
             android:id="@+id/tripDest"
             android:gravity="center_horizontal"
-            android:paddingTop="5dp" />
+            android:paddingTop="5dp"
+            android:textColorLink="#5D4C46"
+            android:textSize="25dp" />
 
         <TextView
-            android:text="TRIP NOTES"
+            android:text=" "
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tripNotes"
             android:gravity="center_horizontal"
-            android:paddingTop="5dp" />
+            android:paddingTop="5dp"
+            android:textColorLink="#5D4C46"
+            android:textSize="25dp" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="405dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:weightSum="1">
+            android:layout_marginTop="20dp" >
 
             <Button
                 android:text="Cancel"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:id="@+id/btnCancel"
-                android:layout_marginRight="30dp" />
+                android:background="@color/colorAccent"
+                android:elevation="0dp"
+                android:layout_marginRight="42dp" />
 
             <Button
                 android:text="Start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnStart"
-                android:layout_marginRight="27dp"
-                android:layout_weight="0.21" />
+                android:background="@color/colorAccent"
+                android:layout_marginRight="40dp" />
 
             <Button
                 android:text="Later"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnLater"
-                android:layout_weight="0.12" />
+                android:background="@color/colorAccent"/>
         </LinearLayout>
     </LinearLayout>
 
