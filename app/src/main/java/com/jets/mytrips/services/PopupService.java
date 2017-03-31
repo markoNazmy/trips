@@ -158,6 +158,7 @@ public class PopupService extends Service {
                 startActivity(intent);
 
                 trip.setStatus("done");
+                trip.setDone(1);
                 dba.updateTrip(trip);
                 alarmSound.stop();
                 vib.cancel();

@@ -62,7 +62,7 @@ public class MapTripsHistory extends FragmentActivity implements OnMapReadyCallb
         singleton = VolleySingleton.getInstance(getApplicationContext());
         requestQueue = singleton.getRequestQueue();
         rootParser = new RootParser();
-        trips = new DBAdapter(getApplicationContext()).getUserTrips(sharedPreferences.getInt("id", -1));
+        trips = new DBAdapter(getApplicationContext()).getHistoricalUserTrips(sharedPreferences.getInt("id", -1));
         //trips.remove(0);
         for (Trip trip : trips) {
 
