@@ -30,9 +30,8 @@ public class ListenerClass extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
 
-        Log.i("myTag", "--------------------I AM LISTENING!!");
-
         final Trip trip = intent.getParcelableExtra("trip");
+        Log.i("myTag", "--------------------I AM LISTENING!!" + trip.getName());
 
         Intent startInt = new Intent(context, ReminderActivity.class);
         startInt.putExtra("trip", trip);

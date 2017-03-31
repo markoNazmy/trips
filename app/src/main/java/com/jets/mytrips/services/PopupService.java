@@ -14,6 +14,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.Vibrator;
@@ -28,9 +29,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jets.mytrips.R;
+import com.jets.mytrips.activities.CurrentTripsActivity;
 import com.jets.mytrips.activities.ReminderActivity;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by rocke on 3/31/2017.
@@ -65,8 +70,10 @@ public class PopupService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        trip = intent.getParcelableExtra("trip");
-        showDialog("Your Trip is Starting!");
+        if(intent != null) {
+            trip = intent.getParcelableExtra("trip");
+            showDialog("Your Trip is Starting!");
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -142,6 +149,12 @@ public class PopupService extends Service {
             public void onClick(View view) {
                 trip.setStatus("cancelled");
                 dba.updateTrip(trip);
+
+                //remove cancelled trip
+                ArrayList<Trip> trips = TripListData.getUpcomingTripsListInstance();
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).remove(trip);
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).notifyDataSetChanged();
+
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
@@ -157,9 +170,18 @@ public class PopupService extends Service {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
+                //remove old object from adapter
+                ArrayList<Trip> trips = TripListData.getUpcomingTripsListInstance();
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).remove(trip);
+
                 trip.setStatus("done");
                 trip.setDone(1);
                 dba.updateTrip(trip);
+
+                //replace old object with new object
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).add(trip);
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).notifyDataSetChanged();
+
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
@@ -173,7 +195,7 @@ public class PopupService extends Service {
                 intent.putExtra("trip", trip);
 
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
-                        trip.getAlarmId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        (new Random().nextInt(100000 - 5) + 5), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Notification.Builder builder = new Notification.Builder(PopupService.this)
                         .setContentTitle("Trips")
@@ -198,8 +220,17 @@ public class PopupService extends Service {
                 }
                 notificationManager.notify(trip.getAlarmId(), n);
 
+                //remove old object from adapter
+                ArrayList<Trip> trips = TripListData.getUpcomingTripsListInstance();
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).remove(trip);
+
                 trip.setStatus("later");
                 dba.updateTrip(trip);
+
+                //replace old object with new object
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).add(trip);
+                TripListData.getMyTripsListAdapterInstance(mView.getContext(), trips).notifyDataSetChanged();
+
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();

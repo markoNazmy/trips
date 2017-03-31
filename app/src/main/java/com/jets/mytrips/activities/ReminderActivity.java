@@ -52,6 +52,7 @@ public class ReminderActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.canDrawOverlays(this)) {
                 Trip trip = getIntent().getParcelableExtra("trip");
+                Log.i("myTag", "--------------------REMINDER!!" + trip.getName());
                 Intent intent = new Intent(this, PopupService.class);
                 intent.putExtra("trip", trip);
                 startService(intent);
@@ -71,6 +72,13 @@ public class ReminderActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
                     Toast.makeText(this, "You must enable app overlay in settings..", Toast.LENGTH_LONG);
+                }
+                else{
+                    Trip trip = getIntent().getParcelableExtra("trip");
+                    Intent intent = new Intent(this, PopupService.class);
+                    intent.putExtra("trip", trip);
+                    startService(intent);
+                    finish();
                 }
             }
         }
