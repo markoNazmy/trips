@@ -100,6 +100,7 @@ public class CurrentTripsActivity extends AppCompatActivity
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(getSharedPreferences("MyTrips", MODE_PRIVATE).getString("fullName", ""));
 
         myTripsListAdapter = TripListData.getMyTripsListAdapterInstance(getApplicationContext(), trips);
+        trips_list.setAdapter(myTripsListAdapter);
         creator = new SwipeMenuCreator() {
 
             @Override
@@ -233,7 +234,7 @@ public class CurrentTripsActivity extends AppCompatActivity
             }
         });
 
-        trips_list.setAdapter(myTripsListAdapter);
+
 
 
     }
