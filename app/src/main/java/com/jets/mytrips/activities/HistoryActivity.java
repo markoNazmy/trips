@@ -78,7 +78,7 @@ public class HistoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(HistoryActivity.this, TripDetails.class);
-                intent.putExtra("HistoryTripDetails", trips.get(position));
+                intent.putExtra("TripDetails", trips.get(position));
                 startActivity(intent);
             }
         });

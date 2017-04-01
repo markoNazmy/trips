@@ -44,7 +44,7 @@ public class UserController {
     }
 
     public void registerUser(final User user, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/RegisterServlet";
+        String url = "https://thawing-anchorage-30033.herokuapp.com/RegisterServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     public void login(final String email, final String password, final boolean gmailAccount, final VolleyCallback callback) {
-        String url = "http://192.168.1.4:8081/MyTripsBackend/LoginServlet";
+        String url = "https://thawing-anchorage-30033.herokuapp.com/LoginServlet";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override

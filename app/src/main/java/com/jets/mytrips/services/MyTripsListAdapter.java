@@ -48,7 +48,6 @@ public class MyTripsListAdapter extends ArrayAdapter {
             rowView = layoutInflater.inflate(R.layout.current_trips_list_cell, parent, false);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
-            System.out.println("hi2 motyim");
 
             //set img
             final Handler placeHandler = new Handler() {
@@ -56,7 +55,8 @@ public class MyTripsListAdapter extends ArrayAdapter {
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
                     if (msg.what == 0) {
-                        imgBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.common_google_signin_btn_icon_dark);
+                        imgBitmap = BitmapFactory.decodeResource(context.getResources(),
+                                R.drawable.map);
                         viewHolder.getPlaceImageView().setImageBitmap(imgBitmap);
                     }
                     else {
@@ -76,7 +76,6 @@ public class MyTripsListAdapter extends ArrayAdapter {
             }.start();
         } else {
             viewHolder = (ViewHolder) rowView.getTag();
-            System.out.println("bye");
         }
 
         viewHolder.getTripName().setText(values.get(position).getName());

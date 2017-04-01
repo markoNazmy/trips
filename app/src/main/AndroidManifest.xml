@@ -3,6 +3,9 @@
     package="com.jets.mytrips">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -11,6 +14,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
@@ -51,6 +56,7 @@
         <activity
             android:name=".activities.TripDetails"
             android:label="@string/title_activity_trip_details"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -65,15 +71,20 @@
 
         <activity
             android:name=".activities.MapTripsHistory"
-            android:label="@string/title_activity_map_trips_history"></activity>
-        <activity android:name=".activities.ReminderActivity"></activity>
+            android:label="@string/title_activity_map_trips_history"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activities.ReminderActivity"
+            android:screenOrientation="portrait"></activity>
 
         <!--Reminder activity-->
+        <!--android:theme="@style/Theme.AppCompat.Light.Dialog"-->
         <activity
             android:name="activities.ReminderActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"></activity>
+            android:screenOrientation="portrait"></activity>
 
         <receiver android:name=".services.ListenerClass" />
+        <service android:name=".services.PopupService" />
     </application>
 
 </manifest>

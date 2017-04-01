@@ -143,6 +143,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
                 //image
                 trip.setImage(place.getId());
+                System.out.println("palce iddddddddddd" + place.getId());
             }
 
             @Override
@@ -325,6 +326,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                             Trip roundTrip = new Trip();
                             roundTrip.setId(new DBAdapter(getApplicationContext()).generateId());
                             roundTrip.setName(trip.getName() + " round trip");
+                            roundTrip.setImage(trip.getImage());
                             System.out.println("trips round nameeeeeee" + roundTrip.getName());
                             roundTrip.setDate(trip.getDate());
                             hours++;

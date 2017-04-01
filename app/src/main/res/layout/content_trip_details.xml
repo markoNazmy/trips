@@ -24,6 +24,13 @@
             android:textSize="35dp"
             android:textStyle="normal|bold" />
 
+        <TextView
+            android:id="@+id/dateTxtDet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="TextView" />
+
         <ImageView
             android:id="@+id/tripImgDet"
             android:layout_width="match_parent"
@@ -45,17 +52,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="TextView"
             android:textColorLink="#5D4C46"
             android:textSize="25dp" />
 
-        <CheckBox
-            android:id="@+id/doneCheckDet"
+        <TextView
+            android:id="@+id/statusTxtDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check as done"
-            android:textColor="#5D4C46"
-            android:textColorLink="#5D4C46" />
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="TextView" />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
