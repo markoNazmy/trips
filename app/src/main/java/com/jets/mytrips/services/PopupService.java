@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.media.Ringtone;
@@ -158,6 +159,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
+                stopSelf();
             }
         });
 
@@ -185,6 +187,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
+                stopSelf();
             }
         });
 
@@ -234,6 +237,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
+                stopSelf();
             }
         });
 
@@ -261,6 +265,18 @@ public class PopupService extends Service {
 
     @Override
     public void onDestroy() {
+        System.out.println("service on destroyyyyyyyyyyyyyyyyyyyyyy");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        TripListData.getUpcomingTripsListInstance().clear();
+        TripListData.getUpcomingTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getUpcomingUserTrips(sharedPreferences.getInt("id", -1)));
+        //TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).clear();
+        TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+        TripListData.getHistoricalTripsListInstance().clear();
+        TripListData.getHistoricalTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getHistoricalUserTrips(sharedPreferences.getInt("id", -1)));
+        //TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(),TripListData.getHistoricalTripsListInstance()).clear();
+        TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(),TripListData.getHistoricalTripsListInstance()).notifyDataSetChanged();
         super.onDestroy();
+
+
     }
 }
