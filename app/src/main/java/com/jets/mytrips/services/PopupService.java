@@ -159,6 +159,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
+                refreshList();
                 stopSelf();
             }
         });
@@ -187,6 +188,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
+                refreshList();
                 stopSelf();
             }
         });
@@ -237,7 +239,7 @@ public class PopupService extends Service {
                 alarmSound.stop();
                 vib.cancel();
                 hideDialog();
-                stopSelf();
+                refreshList();
             }
         });
 
@@ -262,19 +264,19 @@ public class PopupService extends Service {
             mView = null;
         }
     }
-
-    @Override
-    public void onDestroy() {
-        System.out.println("service on destroyyyyyyyyyyyyyyyyyyyyyy");
+    void refreshList(){
         SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
         TripListData.getUpcomingTripsListInstance().clear();
         TripListData.getUpcomingTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getUpcomingUserTrips(sharedPreferences.getInt("id", -1)));
-        //TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).clear();
         TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
         TripListData.getHistoricalTripsListInstance().clear();
         TripListData.getHistoricalTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getHistoricalUserTrips(sharedPreferences.getInt("id", -1)));
-        //TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(),TripListData.getHistoricalTripsListInstance()).clear();
         TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(),TripListData.getHistoricalTripsListInstance()).notifyDataSetChanged();
+    }
+    @Override
+    public void onDestroy() {
+        System.out.println("service on destroyyyyyyyyyyyyyyyyyyyyyy");
+
         super.onDestroy();
 
 
