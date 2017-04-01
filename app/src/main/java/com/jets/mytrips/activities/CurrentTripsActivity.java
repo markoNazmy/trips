@@ -241,6 +241,8 @@ public class CurrentTripsActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        myTripsListAdapter.clear();
+        myTripsListAdapter.notifyDataSetChanged();
         Runtime.getRuntime().gc();
     }
 

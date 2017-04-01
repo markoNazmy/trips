@@ -135,6 +135,8 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        myHistoricalTripsListAdapter.clear();
+        myHistoricalTripsListAdapter.notifyDataSetChanged();
         Runtime.getRuntime().gc();
     }
 }
