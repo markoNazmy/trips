@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="30dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.jets.mytrips.activities.TripDetails"
     tools:showIn="@layout/activity_trip_details">
@@ -13,55 +14,177 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Name"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tripNameDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center"
+            android:layout_marginBottom="25dp"
+            android:paddingLeft="10dp"
             android:text="TextView"
-            android:textColorLink="#5D4C46"
-            android:textSize="35dp"
-            android:textStyle="normal|bold" />
+            android:textSize="13dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Date"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/dateTxtDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="TextView" />
+            android:layout_marginBottom="25dp"
+            android:paddingLeft="10dp"
+            android:text="TextView"
+            android:textSize="13dp" />
 
-        <ImageView
-            android:id="@+id/tripImgDet"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="From"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tripStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:paddingLeft="10dp"
+            android:text="TextView"
+            android:textSize="13dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="To"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tripDestDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_marginBottom="25dp"
+            android:paddingLeft="10dp"
             android:text="TextView"
-            android:textColorLink="#5D4C46"
-            android:textSize="25dp" />
+            android:textSize="13dp" />
 
-        <TextView
-            android:id="@+id/tripNotesDet"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColorLink="#5D4C46"
-            android:textSize="25dp" />
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Status"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/statusTxtDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="TextView" />
+            android:layout_marginBottom="25dp"
+            android:paddingLeft="10dp"
+            android:text="TextView"
+            android:textSize="13dp" />
+
+        <LinearLayout
+            android:id="@+id/noteList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Remember to"
+                android:textColor="#5D4C46"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FFE3D0" />
+        </LinearLayout>
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

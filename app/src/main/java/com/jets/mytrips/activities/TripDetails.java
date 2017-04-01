@@ -1,26 +1,21 @@
 package com.jets.mytrips.activities;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,17 +28,16 @@ import com.jets.mytrips.R;
 import com.jets.mytrips.beans.Trip;
 import com.jets.mytrips.database.DBAdapter;
 
-//import com.jets.mytrips.R;
 
 public class TripDetails extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    CollapsingToolbarLayout collapsingToolbarLayout;
     TextView tripName;
+    TextView tripStart;
     TextView tripDest;
     TextView tripDate;
-    TextView tripNotes;
     TextView tripStatus;
 
-    ImageView tripImg;
     Bitmap imgBitmap;
 
     private GoogleApiClient mGoogleApiClient;
@@ -56,7 +50,7 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = this.getSupportActionBar();
+        final ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         final Trip trip = getIntent().getParcelableExtra("TripDetails");
@@ -69,37 +63,39 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
                 .enableAutoManage(this, this)
                 .build();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //show location on map
-                String map = "http://maps.google.co.in/maps?q=" + trip.getEnd();
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
-                startActivity(intent);
-            }
-        });
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
         tripName = (TextView) findViewById(R.id.tripNameDet);
+        tripStart = (TextView) findViewById(R.id.tripStart);
         tripDest = (TextView) findViewById(R.id.tripDestDet);
         tripDate = (TextView) findViewById(R.id.dateTxtDet);
-        tripNotes = (TextView) findViewById(R.id.tripNotesDet);
-        tripImg = (ImageView) findViewById(R.id.tripImgDet);
         tripStatus = (TextView) findViewById(R.id.statusTxtDet);
+        LinearLayout tripNotesView = (LinearLayout) findViewById(R.id.noteList);
 
         tripName.setText(trip.getName());
-        tripDest.setText(trip.getStart() + " - " + trip.getEnd());
+        tripStart.setText(trip.getStart());
+        tripDest.setText(trip.getEnd());
         tripDate.setText(trip.getDate());
-        tripStatus.setText("Status: " + trip.getStatus());
+        tripStatus.setText(trip.getStatus());
 
         final DBAdapter dba = new DBAdapter(this);
         trip.setNotes(dba.getTripNotes(trip.getId()));
 
-        if (trip.getNotes().size() > 0)
-            tripNotes.setText("Remember to: \n");
+        if (trip.getNotes().size() > 0) {
+            tripNotesView.setVisibility(View.VISIBLE);
+        }
 
         for (int i = 0; i < trip.getNotes().size(); i++) {
-            tripNotes.setText(tripNotes.getText().toString() + trip.getNotes().get(i).getNote() + "\n");
+            TextView noteTextView = new TextView(this);
+            TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
+            params.topMargin = 20;
+            params.leftMargin = 10;
+            noteTextView.setLayoutParams(params);
+            noteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bullet, 0, 0, 0);
+            noteTextView.setCompoundDrawablePadding(10);
+            noteTextView.setTextSize(13);
+            noteTextView.setText(trip.getNotes().get(i).getNote());
+            tripNotesView.addView(noteTextView);
         }
 
         Log.i("myTag", "-----image place id in details: " + trip.getImage());
@@ -111,10 +107,9 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
                 super.handleMessage(msg);
                 if (msg.what == 0) {
                     imgBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.map);
-                    tripImg.setImageBitmap(imgBitmap);
-                } else {
-                    tripImg.setImageBitmap(imgBitmap);
                 }
+                BitmapDrawable toolBarBarBackground = new BitmapDrawable(getResources(), imgBitmap);
+                collapsingToolbarLayout.setBackground(toolBarBarBackground);
             }
         };
 
