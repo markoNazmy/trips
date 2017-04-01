@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 public class HistoryActivity extends AppCompatActivity {
     DBAdapter dbAdapter;
+    SharedPreferences sharedPreferences;
     SwipeMenuListView trips_list;
     SwipeMenuCreator creator;
     MyTripsListAdapter myHistoricalTripsListAdapter;
@@ -43,7 +44,7 @@ public class HistoryActivity extends AppCompatActivity {
         trips_list = (SwipeMenuListView) findViewById(R.id.trips_list);
 
         dbAdapter = new DBAdapter(getApplicationContext());
-        SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
 
         /* Clear trips list in case of rotation */
         trips.clear();
@@ -95,8 +96,9 @@ public class HistoryActivity extends AppCompatActivity {
                         dbAdapter.updateTrip(deletedTrip);
                         // User trips is now asynchronous
                         TripController.getInstance(HistoryActivity.this).setUserTripsSynchronized(false);
-                        // Remove trip from the list of upcoming trips
-                        trips.remove(listPosition);
+                        // Refresh list
+                        myHistoricalTripsListAdapter.clear();
+                        myHistoricalTripsListAdapter.addAll(dbAdapter.getHistoricalUserTrips(sharedPreferences.getInt("id", -1)));
                         myHistoricalTripsListAdapter.notifyDataSetChanged();
                         break;
                 }

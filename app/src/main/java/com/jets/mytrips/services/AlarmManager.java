@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.jets.mytrips.activities.AddOrEditTrip;
-import com.jets.mytrips.activities.CurrentTripsActivity;
-import com.jets.mytrips.activities.ReminderActivity;
 import com.jets.mytrips.beans.Trip;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -20,7 +16,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class AlarmManager {
 
-    public static void setTask(Trip trip , Context mContext , long timeInMilies){
+    public static void setTask(Trip trip, Context mContext, long timeInMilies) {
 
         Intent intent = new Intent(mContext, ListenerClass.class);
         //intent.setAction("tripBegins");
@@ -38,9 +34,9 @@ public class AlarmManager {
         }
     }
 
-    public static void deleteTask(int alarmId ,Context mContext){
+    public static void deleteTask(int alarmId, Context mContext) {
         Intent intent = new Intent(mContext, ListenerClass.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,alarmId,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) mContext.getSystemService(ALARM_SERVICE);
         am.cancel(pendingIntent);
         pendingIntent.cancel();

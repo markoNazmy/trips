@@ -313,7 +313,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                         trip.setStatus("upcoming");
                         trip.setAlarmId(new Random().nextInt(100000 - 5) + 5);
                         trip.setMilliSeconds(diff_in_ms);
-                        AlarmManager.setTask(trip, AddOrEditTrip.this, diff_in_ms);
+                        AlarmManager.setTask(trip, getApplicationContext(), diff_in_ms);
                         if (!notes.isEmpty()) {
 
                             for (Note note : notes) {
@@ -348,7 +348,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                             roundTrip.setEndY(trip.getStartY());
                             roundTrip.setUserId(user_id);
                             roundTrip.setAlarmId(new Random().nextInt(100000 - 5) + 5);
-                            AlarmManager.setTask(roundTrip, AddOrEditTrip.this, (diff_in_ms + 3600000));
+                            AlarmManager.setTask(roundTrip, getApplicationContext(), (diff_in_ms + 3600000));
                             new DBAdapter(AddOrEditTrip.this).addTrip(roundTrip);
                             TripListData.getUpcomingTripsListInstance().add(roundTrip);
                         }
@@ -375,7 +375,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                             trip.setDone(0);
                             trip.setStatus("upcoming");
                             trip.setMilliSeconds(diff_in_ms);
-                            AlarmManager.setTask(trip, AddOrEditTrip.this, diff_in_ms);
+                            AlarmManager.setTask(trip, getApplicationContext(), diff_in_ms);
                             TripListData.getUpcomingTripsListInstance().add(tripPositionAtList, trip);
                             TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         }
