@@ -357,14 +357,15 @@ public class AddOrEditTrip extends AppCompatActivity {
                         tripController.setUserTripsSynchronized(false);
                         TripListData.getUpcomingTripsListInstance().add(trip);
                         TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+                        refreshList();
                         finish();
                     }
                 } else {
                     if (checkText(tripName.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(), tripTime.getText().toString())) {
                         // User trips is now asynchronous
                         tripController.setUserTripsSynchronized(false);
-                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
-                        TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+//                        TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
+//                        TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         if (doneCheckBox.isChecked()) {
                             trip.setDone(1);
                             trip.setStatus("done");
@@ -376,8 +377,8 @@ public class AddOrEditTrip extends AppCompatActivity {
                             trip.setStatus("upcoming");
                             trip.setMilliSeconds(diff_in_ms);
                             AlarmManager.setTask(trip, getApplicationContext(), diff_in_ms);
-                            TripListData.getUpcomingTripsListInstance().add(tripPositionAtList, trip);
-                            TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+//                            TripListData.getUpcomingTripsListInstance().add(tripPositionAtList, trip);
+//                            TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         }
                         if (!notesForUpdate.isEmpty()) {
 
@@ -389,6 +390,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                         }
 
                         new DBAdapter(AddOrEditTrip.this).updateTrip(trip);
+                        refreshList();
                         finish();
                     }
                 }
@@ -466,7 +468,15 @@ public class AddOrEditTrip extends AppCompatActivity {
             return false;
         }
     }
-
+    void refreshList(){
+        SharedPreferences sharedPreferences = getSharedPreferences("MyTrips", MODE_PRIVATE);
+        TripListData.getUpcomingTripsListInstance().clear();
+        TripListData.getUpcomingTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getUpcomingUserTrips(sharedPreferences.getInt("id", -1)));
+        TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+        TripListData.getHistoricalTripsListInstance().clear();
+        TripListData.getHistoricalTripsListInstance().addAll(new DBAdapter(getApplicationContext()).getHistoricalUserTrips(sharedPreferences.getInt("id", -1)));
+        TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(),TripListData.getHistoricalTripsListInstance()).notifyDataSetChanged();
+    }
 
     boolean checkText(String text) {
         if (text != null && !(text.trim().equals(""))) {

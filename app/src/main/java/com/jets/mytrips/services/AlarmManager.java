@@ -36,7 +36,7 @@ public class AlarmManager {
 
     public static void deleteTask(int alarmId, Context mContext) {
         Intent intent = new Intent(mContext, ListenerClass.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) mContext.getSystemService(ALARM_SERVICE);
         am.cancel(pendingIntent);
         pendingIntent.cancel();
