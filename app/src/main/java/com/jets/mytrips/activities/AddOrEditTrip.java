@@ -364,6 +364,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                         // User trips is now asynchronous
                         tripController.setUserTripsSynchronized(false);
                         TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
+                        TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         if (doneCheckBox.isChecked()) {
                             trip.setDone(1);
                             trip.setStatus("done");
