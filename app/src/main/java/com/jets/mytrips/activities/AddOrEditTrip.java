@@ -369,8 +369,8 @@ public class AddOrEditTrip extends AppCompatActivity {
                             trip.setDone(1);
                             trip.setStatus("done");
                             AlarmManager.deleteTask(trip.getAlarmId(), getApplicationContext());
-                            TripListData.getHistoricalTripsListInstance().add(trip);
-                            TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
+                            //TripListData.getHistoricalTripsListInstance().add(trip);
+                            //TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         } else {
                             trip.setDone(0);
                             trip.setStatus("upcoming");
