@@ -2,9 +2,12 @@ package com.jets.mytrips.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jets.mytrips.R;
@@ -18,7 +21,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_splash_screen);
+
+        LayoutInflater inflater = getLayoutInflater();
+        getWindow().addContentView(inflater.inflate(R.layout.activity_register, null),
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -77,5 +86,17 @@ public class RegisterActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((ImageView) findViewById(R.id.photo_1)).setImageDrawable(null);
+        ((ImageView) findViewById(R.id.photo_2)).setImageDrawable(null);
+        ((ImageView) findViewById(R.id.photo_3)).setImageDrawable(null);
+        ((ImageView) findViewById(R.id.photo_4)).setImageDrawable(null);
+        ((ImageView) findViewById(R.id.photo_5)).setImageDrawable(null);
+        ((ImageView) findViewById(R.id.photo_6)).setImageDrawable(null);
+        Runtime.getRuntime().gc();
     }
 }

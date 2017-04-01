@@ -9,51 +9,51 @@
     tools:showIn="@layout/activity_trip_details">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:text="TextView"
+            android:id="@+id/tripNameDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tripNameDet"
-            android:gravity="center"
             android:layout_marginBottom="5dp"
-            android:textStyle="normal|bold"
+            android:gravity="center"
+            android:text="TextView"
             android:textColorLink="#5D4C46"
-            android:textSize="35dp" />
+            android:textSize="35dp"
+            android:textStyle="normal|bold" />
 
         <ImageView
+            android:id="@+id/tripImgDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
-            android:id="@+id/tripImgDet"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginBottom="5dp"
+            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
         <TextView
-            android:text="TextView"
+            android:id="@+id/tripDestDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tripDestDet"
             android:gravity="center"
+            android:text="TextView"
             android:textColorLink="#5D4C46"
             android:textSize="25dp" />
 
         <TextView
-            android:text="TextView"
+            android:id="@+id/tripNotesDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tripNotesDet"
             android:gravity="center"
+            android:text="TextView"
             android:textColorLink="#5D4C46"
             android:textSize="25dp" />
 
         <CheckBox
-            android:text="Check as done"
+            android:id="@+id/doneCheckDet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/doneCheckDet"
+            android:text="Check as done"
             android:textColor="#5D4C46"
             android:textColorLink="#5D4C46" />
 

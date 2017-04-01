@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.Button;
@@ -60,51 +62,46 @@ public class AddOrEditTrip extends AppCompatActivity {
     LinearLayout doneLayout;
     LinearLayout linearLayout;
     LinearLayout roundLayout;
-    ArrayList<Note>notes;
-    ArrayList<Note>notesForUpdate;
+    ArrayList<Note> notes;
+    ArrayList<Note> notesForUpdate;
     int year;
     int month;
     int day;
     int hours;
     int minutes;
     Trip trip;
-    String tripId ;
+    String tripId;
     int tripPositionAtList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_edit_trip);
 
-
-
-
+        ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         tripName = (EditText) findViewById(R.id.trip_name);
         tripNote = (EditText) findViewById(R.id.note_text);
-        tripStatus =(TextView) findViewById(R.id.status);
-        tripDate =(TextView) findViewById(R.id.date_view);
-        tripTime =(TextView) findViewById(R.id.time_view);
-        doneTextView=(TextView) findViewById(R.id.doneText) ;
-        tripFrom = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.from_auto_complete);
-        tripTo = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.to_auto_complete);
-        pickDate =(Button)findViewById(R.id.pick_date) ;
-        pickTime =(Button)findViewById(R.id.pick_time) ;
-        addNote =(Button)findViewById(R.id.add_note) ;
-        save =(Button)findViewById(R.id.save) ;
-        doneCheckBox =(CheckBox) findViewById(R.id.done_checkBox) ;
-        roundCheckBox =(CheckBox) findViewById(R.id.round_checkBox) ;
-        linearLayout =(LinearLayout)findViewById(R.id.note_layout);
-        doneLayout = (LinearLayout) findViewById(R.id.done_layout) ;
-        roundLayout = (LinearLayout) findViewById(R.id.round_layout) ;
+        tripStatus = (TextView) findViewById(R.id.status);
+        tripDate = (TextView) findViewById(R.id.date_view);
+        tripTime = (TextView) findViewById(R.id.time_view);
+        doneTextView = (TextView) findViewById(R.id.doneText);
+        tripFrom = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.from_auto_complete);
+        tripTo = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.to_auto_complete);
+        pickDate = (Button) findViewById(R.id.pick_date);
+        pickTime = (Button) findViewById(R.id.pick_time);
+        addNote = (Button) findViewById(R.id.add_note);
+        save = (Button) findViewById(R.id.save);
+        doneCheckBox = (CheckBox) findViewById(R.id.done_checkBox);
+        roundCheckBox = (CheckBox) findViewById(R.id.round_checkBox);
+        linearLayout = (LinearLayout) findViewById(R.id.note_layout);
+        doneLayout = (LinearLayout) findViewById(R.id.done_layout);
+        roundLayout = (LinearLayout) findViewById(R.id.round_layout);
 
         Intent intent = getIntent();
-        tripPositionAtList = intent.getIntExtra("tripPositionAtList",-1);
+        tripPositionAtList = intent.getIntExtra("tripPositionAtList", -1);
         System.out.println(tripPositionAtList);
-
-
-
-
-
 
 
         tripFrom.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -166,11 +163,6 @@ public class AddOrEditTrip extends AppCompatActivity {
         });
 
 
-
-
-
-
-
         pickDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,12 +188,6 @@ public class AddOrEditTrip extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
         pickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,8 +198,8 @@ public class AddOrEditTrip extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(AddOrEditTrip.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        System.out.println( selectedHour + ":" + selectedMinute);
-                        tripTime.setText( selectedHour + ":" + selectedMinute);
+                        System.out.println(selectedHour + ":" + selectedMinute);
+                        tripTime.setText(selectedHour + ":" + selectedMinute);
                     }
                 }, hours, minutes, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
@@ -223,15 +209,11 @@ public class AddOrEditTrip extends AppCompatActivity {
         });
 
 
-
-
-
-
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(tripNote.getText().toString()!=null&&!tripNote.getText().toString().trim().equals("")) {
+                if (tripNote.getText().toString() != null && !tripNote.getText().toString().trim().equals("")) {
                     Note note = new Note();
                     note.setId(UUID.randomUUID().toString().substring(10));
                     note.setNote(tripNote.getText().toString());
@@ -241,14 +223,12 @@ public class AddOrEditTrip extends AppCompatActivity {
                     TextView textView = new TextView(AddOrEditTrip.this);
                     textView.setText(note.getNote());
                     linearLayout.addView(textView);
-                    if (tripPositionAtList==-1) {
+                    if (tripPositionAtList == -1) {
                         notes.add(note);
-                    }
-                    else{
+                    } else {
                         notesForUpdate.add(note);
                     }
-                }
-                else{
+                } else {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you did'nt entered a note to add !", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -257,61 +237,48 @@ public class AddOrEditTrip extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
-
         save.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
             public void onClick(View v) {
 
-                long diff_in_ms=0;
-                long currentDay= System.currentTimeMillis();
-                if(checkText(tripName.getText().toString())){
+                long diff_in_ms = 0;
+                long currentDay = System.currentTimeMillis();
+                if (checkText(tripName.getText().toString())) {
                     trip.setName(tripName.getText().toString());
-                }
-                else{
+                } else {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a name for your trip", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
 
                 }
 
 
-                if(!checkText(trip.getStart())){
+                if (!checkText(trip.getStart())) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter Start destination for your trip", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
 
 
-                if(!checkText(trip.getEnd())){
+                if (!checkText(trip.getEnd())) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter End destination for your trip", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
 
 
-
-
-
-                if(!checkText(tripDate.getText().toString())){
+                if (!checkText(tripDate.getText().toString())) {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a date for your trip", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
 
 
-
-
-                if(!checkText(tripTime.getText().toString())){
+                if (!checkText(tripTime.getText().toString())) {
 
                     Snackbar.make(getWindow().getDecorView().getRootView(), "you should enter a time for your trip", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-                if(checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())){
-                    if(checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
+                if (checkText(tripDate.getText().toString()) && checkText(tripTime.getText().toString())) {
+                    if (checkTimeUpcoming(tripDate.getText().toString(), tripTime.getText().toString())) {
                         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
                         Date date = null;
                         try {
@@ -326,8 +293,7 @@ public class AddOrEditTrip extends AppCompatActivity {
 
                         trip.setDate(tripDate.getText().toString());
                         trip.setTime(tripTime.getText().toString());
-                    }
-                    else{
+                    } else {
                         Snackbar.make(getWindow().getDecorView().getRootView(), "you should not enter a past time", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
@@ -340,34 +306,34 @@ public class AddOrEditTrip extends AppCompatActivity {
                     trip.setUserId(user_id);
                 }
 
-                if (tripPositionAtList==-1) {
-                    if (checkText(tripName.getText().toString()) && checkText(tripDate.getText().toString())&&checkText(tripTime.getText().toString())&& checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
+                if (tripPositionAtList == -1) {
+                    if (checkText(tripName.getText().toString()) && checkText(tripDate.getText().toString()) && checkText(tripTime.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(), tripTime.getText().toString())) {
                         //trip.setImage("aaa");
                         trip.setStatus("upcoming");
-                        trip.setAlarmId( new Random().nextInt(100000 - 5) + 5);
+                        trip.setAlarmId(new Random().nextInt(100000 - 5) + 5);
                         trip.setMilliSeconds(diff_in_ms);
-                        AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
-                        if(!notes.isEmpty()) {
+                        AlarmManager.setTask(trip, AddOrEditTrip.this, diff_in_ms);
+                        if (!notes.isEmpty()) {
 
                             for (Note note : notes) {
 
-                                System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                                System.out.println("note idddddddddddd" + new DBAdapter(AddOrEditTrip.this).addNote(note));
                             }
                             trip.setNotes(notes);
                         }
-                        if (roundCheckBox.isChecked()){
-                            Trip roundTrip=new Trip();
+                        if (roundCheckBox.isChecked()) {
+                            Trip roundTrip = new Trip();
                             roundTrip.setId(new DBAdapter(getApplicationContext()).generateId());
-                            roundTrip.setName(trip.getName()+" round trip");
+                            roundTrip.setName(trip.getName() + " round trip");
                             System.out.println("trips round nameeeeeee" + roundTrip.getName());
                             roundTrip.setDate(trip.getDate());
                             hours++;
                             roundTrip.setTime(hours + ":" + minutes);
-                            if(!notes.isEmpty()) {
+                            if (!notes.isEmpty()) {
 
                                 for (Note note : notes) {
                                     note.setTripId(roundTrip.getId());
-                                    System.out.println("note idddddddddddd"+new DBAdapter(AddOrEditTrip.this).addNote(note));
+                                    System.out.println("note idddddddddddd" + new DBAdapter(AddOrEditTrip.this).addNote(note));
                                 }
                                 roundTrip.setNotes(notes);
                             }
@@ -379,8 +345,8 @@ public class AddOrEditTrip extends AppCompatActivity {
                             roundTrip.setEndX(trip.getStartX());
                             roundTrip.setEndY(trip.getStartY());
                             roundTrip.setUserId(user_id);
-                            roundTrip.setAlarmId( new Random().nextInt(100000 - 5) + 5);
-                            AlarmManager.setTask(roundTrip,AddOrEditTrip.this,(diff_in_ms+3600000));
+                            roundTrip.setAlarmId(new Random().nextInt(100000 - 5) + 5);
+                            AlarmManager.setTask(roundTrip, AddOrEditTrip.this, (diff_in_ms + 3600000));
                             new DBAdapter(AddOrEditTrip.this).addTrip(roundTrip);
                             TripListData.getUpcomingTripsListInstance().add(roundTrip);
                         }
@@ -389,29 +355,25 @@ public class AddOrEditTrip extends AppCompatActivity {
                         tripController.setUserTripsSynchronized(false);
                         TripListData.getUpcomingTripsListInstance().add(trip);
                         TripListData.getMyTripsListAdapterInstance(AddOrEditTrip.this, TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
-                        Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
-                        startActivity(intent);
+                        finish();
                     }
-                }
-
-                else{
-                    if (checkText(tripName.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(),tripTime.getText().toString())) {
+                } else {
+                    if (checkText(tripName.getText().toString()) && checkText(trip.getStart()) && checkText(trip.getEnd()) && checkTimeUpcoming(tripDate.getText().toString(), tripTime.getText().toString())) {
                         // User trips is now asynchronous
                         tripController.setUserTripsSynchronized(false);
                         TripListData.getUpcomingTripsListInstance().remove(tripPositionAtList);
-                        if(doneCheckBox.isChecked()){
+                        if (doneCheckBox.isChecked()) {
                             trip.setDone(1);
                             trip.setStatus("done");
-                            AlarmManager.deleteTask(trip.getAlarmId(),getApplicationContext());
+                            AlarmManager.deleteTask(trip.getAlarmId(), getApplicationContext());
                             TripListData.getHistoricalTripsListInstance().add(trip);
                             TripListData.getMyHistoricalTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
-                        }
-                        else {
+                        } else {
                             trip.setDone(0);
                             trip.setStatus("upcoming");
                             trip.setMilliSeconds(diff_in_ms);
-                            AlarmManager.setTask(trip,AddOrEditTrip.this,diff_in_ms);
-                            TripListData.getUpcomingTripsListInstance().add(tripPositionAtList,trip);
+                            AlarmManager.setTask(trip, AddOrEditTrip.this, diff_in_ms);
+                            TripListData.getUpcomingTripsListInstance().add(tripPositionAtList, trip);
                             TripListData.getMyTripsListAdapterInstance(getApplicationContext(), TripListData.getUpcomingTripsListInstance()).notifyDataSetChanged();
                         }
                         if (!notesForUpdate.isEmpty()) {
@@ -424,20 +386,12 @@ public class AddOrEditTrip extends AppCompatActivity {
                         }
 
                         new DBAdapter(AddOrEditTrip.this).updateTrip(trip);
-
-
-
-
-                        Intent intent = new Intent(AddOrEditTrip.this,CurrentTripsActivity.class);
-                        startActivity(intent);
+                        finish();
                     }
                 }
 
 
-
-
-
-                }
+            }
 
 
         });
@@ -447,29 +401,28 @@ public class AddOrEditTrip extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(tripPositionAtList==-1) {
+        if (tripPositionAtList == -1) {
             doneLayout.setVisibility(View.INVISIBLE);
             trip = new Trip();
             notes = new ArrayList<>();
             tripId = UUID.randomUUID().toString().substring(10);
             trip.setId(tripId);
-        }
-        else{
-            notesForUpdate=new ArrayList<>();
+        } else {
+            notesForUpdate = new ArrayList<>();
             trip = TripListData.getUpcomingTripsListInstance().get(tripPositionAtList);
             tripFrom.setHint(trip.getStart());
             tripTo.setHint(trip.getEnd());
             tripName.setText(trip.getName());
             tripDate.setText(trip.getDate());
-            tripTime.setText(trip.getTime()+"");
+            tripTime.setText(trip.getTime() + "");
 
-            if(trip.getDone()==1){
+            if (trip.getDone() == 1) {
                 doneCheckBox.setChecked(true);
             }
             roundLayout.setVisibility(View.INVISIBLE);
             notes = new DBAdapter(getApplicationContext()).getTripNotes(trip.getId());
-            System.out.println("notessss size "+notes.size());
-            if(!notes.isEmpty()) {
+            System.out.println("notessss size " + notes.size());
+            if (!notes.isEmpty()) {
                 for (Note note : notes) {
                     TextView textView = new TextView(AddOrEditTrip.this);
                     textView.setText(note.getNote());
@@ -479,64 +432,45 @@ public class AddOrEditTrip extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    static boolean checkTimeUpcoming(String date , String time){
+    static boolean checkTimeUpcoming(String date, String time) {
 
         long diff;
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date dateTovalidate= null;
+        Date dateTovalidate = null;
         try {
-            dateTovalidate = df.parse(date+" "+time);
+            dateTovalidate = df.parse(date + " " + time);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        GregorianCalendar nextDay=new  GregorianCalendar ();
+        GregorianCalendar nextDay = new GregorianCalendar();
         nextDay.setTime(dateTovalidate);
-        diff=nextDay. getTimeInMillis()-System.currentTimeMillis();;
-        System.out.println("diffffffffff "+diff);
-        if(diff>0){
+        diff = nextDay.getTimeInMillis() - System.currentTimeMillis();
+        ;
+        System.out.println("diffffffffff " + diff);
+        if (diff > 0) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
 
-
-    boolean checkText(String text){
-        if(text!=null&&!(text.trim().equals(""))){
+    boolean checkText(String text) {
+        if (text != null && !(text.trim().equals(""))) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
 }
-
-//    Calendar calendar = Calendar.getInstance();
-//                calendar.set(year, month+1, day,
-//                        hours, minutes, 0);
-//                System.out.println("eeeeeeeeeeeeeeeee"+(calendar.getTimeInMillis()-System.currentTimeMillis()));
-//                long diff_in_ms;
-//                long currentDay= System.currentTimeMillis();
-//                GregorianCalendar nextDay=new  GregorianCalendar (year,month+1,day,hours,minutes,0);
-//
-//                diff_in_ms=nextDay. getTimeInMillis()-currentDay;
-//                System.out.println("nowwwwwwwwwwwwwwwwwwww"+diff_in_ms);
-//                    GregorianCalendar nextDayy=new  GregorianCalendar (year,month,day,hours,minutes,0);
-//                    diff_in_ms=nextDayy. getTimeInMillis()-currentDay;
-//                    System.out.println("diffffffffff "+diff_in_ms);

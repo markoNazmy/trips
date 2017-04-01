@@ -3,6 +3,8 @@ package com.jets.mytrips.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,10 +12,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +35,7 @@ import com.jets.mytrips.database.DBAdapter;
 
 //import com.jets.mytrips.R;
 
-public class TripDetails extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+public class TripDetails extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     TextView tripName;
     TextView tripDest;
@@ -46,8 +51,12 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_details);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         final Trip trip = getIntent().getParcelableExtra("TripDetails");
 
@@ -87,10 +96,10 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
         final DBAdapter dba = new DBAdapter(this);
         trip.setNotes(dba.getTripNotes(trip.getId()));
 
-        if(trip.getNotes().size() > 0)
+        if (trip.getNotes().size() > 0)
             tripNotes.setText("Remember to: \n");
 
-        for (int i = 0; i < trip.getNotes().size(); i++){
+        for (int i = 0; i < trip.getNotes().size(); i++) {
             tripNotes.setText(tripNotes.getText().toString() + trip.getNotes().get(i).getNote() + "\n");
         }
 
@@ -104,8 +113,7 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
                 if (msg.what == 0) {
                     imgBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.common_google_signin_btn_icon_dark);
                     tripImg.setImageBitmap(imgBitmap);
-                }
-                else {
+                } else {
                     tripImg.setImageBitmap(imgBitmap);
                 }
             }
@@ -113,7 +121,7 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
 
         new Thread() {
             public void run() {
-               imgBitmap = downloadBitmap(trip.getImage());
+                imgBitmap = downloadBitmap(trip.getImage());
 
                 if (imgBitmap == null)
                     messageHandler.sendEmptyMessage(0);
@@ -122,17 +130,16 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
             }
         }.start();
 
-        if(trip.getDone() == 1)
+        if (trip.getDone() == 1)
             doneCheck.setChecked(true);
 
         doneCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!doneCheck.isChecked()) {
+                if (!doneCheck.isChecked()) {
                     trip.setDone(1);
                     dba.updateTrip(trip);
-                }
-                else{
+                } else {
                     //allow user to re-do a trip (but he must edit to new date)
                     trip.setDone(1);
                     dba.updateTrip(trip);
@@ -140,6 +147,22 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
             }
         });
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Runtime.getRuntime().gc();
     }
 
     private Bitmap downloadBitmap(String url) {
@@ -161,8 +184,7 @@ public class TripDetails extends AppCompatActivity implements GoogleApiClient.On
                 // Load a scaled bitmap for this photo.
                 imgBitmap = photo.getScaledPhoto(mGoogleApiClient, 1000, 1000).await()
                         .getBitmap();
-            }
-            else{
+            } else {
                 imgBitmap = null;
             }
 
