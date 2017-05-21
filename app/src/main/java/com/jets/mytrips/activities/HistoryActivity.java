@@ -62,7 +62,7 @@ public class HistoryActivity extends AppCompatActivity {
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
                         0x3F, 0x25)));
                 // set item width
-                deleteItem.setWidth((200));
+                deleteItem.setWidth((250));
                 // set item title
                 deleteItem.setTitle("Delete");
                 // set item title font size

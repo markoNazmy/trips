@@ -56,6 +56,10 @@ public class PopupService extends Service {
     TextView tripDest;
     TextView tripNotes;
 
+    Notification.Builder builder;
+    Notification n;
+    NotificationManager notificationManager ;
+
     Trip trip;
     DBAdapter dba;
 
@@ -161,6 +165,9 @@ public class PopupService extends Service {
                 hideDialog();
                 refreshList();
                 stopSelf();
+                if (notificationManager!=null){
+                    notificationManager.cancel(trip.getAlarmId());
+                }
             }
         });
 
@@ -190,6 +197,9 @@ public class PopupService extends Service {
                 hideDialog();
                 refreshList();
                 stopSelf();
+                if (notificationManager!=null){
+                    notificationManager.cancel(trip.getAlarmId());
+                }
             }
         });
 
@@ -202,24 +212,24 @@ public class PopupService extends Service {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
                         (new Random().nextInt(100000 - 5) + 5), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Notification.Builder builder = new Notification.Builder(PopupService.this)
+               builder = new Notification.Builder(PopupService.this)
                         .setContentTitle("Trips")
                         .setContentText("Your trip is pending, click to start..")
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(R.drawable.map)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(true);
-                Notification n;
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     n = builder.build();
                 } else {
                     n = builder.getNotification();
+
                 }
 
                 n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-                NotificationManager notificationManager = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 }

@@ -147,7 +147,7 @@ public class CurrentTripsActivity extends AppCompatActivity
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
                         0x3F, 0x25)));
                 // set item width
-                deleteItem.setWidth((200));
+                deleteItem.setWidth((250));
                 // set item title
                 deleteItem.setTitle("Delete");
                 // set item title font size
@@ -324,6 +324,8 @@ public class CurrentTripsActivity extends AppCompatActivity
         final TripController tripController = TripController.getInstance(this);
 
         if (!tripController.isUserTripsSynchronized()) {
+            Toast.makeText(CurrentTripsActivity.this, "synchronizing your trips !", Toast.LENGTH_SHORT).show();
+
             final ArrayList<Trip> trips = dbAdapter.getUserTrips(getSharedPreferences("MyTrips", MODE_PRIVATE).getInt("id", -1));
             if (!trips.isEmpty()) {
                 for (Trip trip : trips) {

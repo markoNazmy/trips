@@ -52,11 +52,11 @@
 
         <activity
             android:name=".activities.AddOrEditTrip"
-            android:label="Update My Trips" />
+            android:label="Update My Trips"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.TripDetails"
             android:label="@string/title_activity_trip_details"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity

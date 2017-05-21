@@ -72,7 +72,7 @@ public class AddOrEditTrip extends AppCompatActivity {
     Trip trip;
     String tripId;
     int tripPositionAtList;
-
+    String roundTripImageId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +113,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                 trip.setStart(place.getName().toString());
                 trip.setStartX(place.getLatLng().latitude);
                 trip.setStartY(place.getLatLng().longitude);
+                roundTripImageId = place.getId();
             }
 
             @Override
@@ -339,6 +340,7 @@ public class AddOrEditTrip extends AppCompatActivity {
                                 }
                                 roundTrip.setNotes(notes);
                             }
+                            roundTrip.setImage(roundTripImageId);
                             roundTrip.setStatus("upcoming");
                             roundTrip.setStart(trip.getEnd());
                             roundTrip.setStartX(trip.getEndX());
